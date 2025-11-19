@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXA System - Verifikasi Akses</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* ======================================================= */
+        /* BASE & TYPOGRAPHY */
+        /* ======================================================= */
+        body { 
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0; 
+            background: linear-gradient(135deg, #a7b7eb 0%, #7d8be0 100%) !important; /* Tambahkan !important */
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto; 
+        }
+        
+        .container {
+            max-width: 500px; 
+            width: 90%; 
+            margin: 2rem auto; 
+            padding: 2.5rem; 
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative; /* DIKEMBALIKAN untuk keamanan logo absolute/relative */
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 1.5rem; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            font-size: 2.2em; 
+            margin-bottom: 0.5rem; 
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            color: #5d6d7e;
+            font-size: 1.1em;
+            margin-top: 0;
+            font-weight: 400;
+        }
+        
+        .stage-title { 
+            text-align: center; 
+            margin-bottom: 2rem; 
+            color: #34495e; 
+            font-size: 1.2em; 
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* ======================================================= */
+        /* LOGO TEKS DI TENGAH (PENGGANTI GAMBAR) */
+        /* ======================================================= */
+        .nexa-text-logo {
+            background-color: #D3F1EE;
+            border-radius: 12px; 
+            padding: 15px 30px; 
+            margin: 1.5rem auto 2rem auto;
+            display: inline-block; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            cursor: default; 
+        }
+
+        .nexa-text-logo h2 {
+            color: #2C6367;
+            font-size: 1.8em;
+            margin: 0; 
+            font-weight: 700;
+            letter-spacing: 1.5px; 
+            text-transform: uppercase;
+            border-bottom: none;
+        }
+
+        .nexa-text-logo p.slogan {
+            color: #3C8388;
+            font-size: 0.9em; 
+            margin: -5px 0 0 0; 
+            font-weight: 400;
+        }
+
+        /* ======================================================= */
+        /* REVISI: DYNAMIC UI STATES (DARI SCRIPT 2) */
+        /* ======================================================= */
+
+        /* 1. Logo di Pojok Kanan Atas (Layer 2 state) */
+        .nexa-text-logo.top-right {
+            position: fixed; /* Kunci Fix Logo: Terlepas dari parent */ 
+            top: 20px;
+            right: 20px;
+            margin: 0;
+            padding: 8px 15px;
+            transform: scale(0.75);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            z-index: 99999; 
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Penyesuaian font di mode top-right */
+        .nexa-text-logo.top-right h2 {
+            font-size: 1.4em;
+            letter-spacing: 1px;
+        }
+        .nexa-text-logo.top-right p.slogan {
+            font-size: 0.8em;
+            margin-top: -3px;
+        }
+
+        /* 2. Sembunyikan elemen header di Layer 2 */
+        .hidden-on-layer2 {
+            transition: opacity 0.3s ease-out;
+        }
+        .hidden-on-layer2.hidden-element {
+            display: none !important; /* Memastikan elemen hilang sepenuhnya */
+            opacity: 0;
+        }
+
+        /* 3. Geser Konten Layer 2/3 ke Bawah */
+        #layer2, #layer3 {
+            padding-top: 30px; /* Geser konten ke bawah */
+        }
+        #layer2 h2 {
+            margin-top: 0; 
+            font-size: 1.5em; 
+            color: #34495e;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* ======================================================= */
+        /* REVISI LAYER 3 HEADER & LAYOUT (BARU) */
+        /* ======================================================= */
+        .layer3-header-content {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Mengatur posisi Logo di Layer 3 (dikembalikan ke tengah, besar) */
+        .layer3-header-content .nexa-text-logo {
+            margin: 0.5rem auto 0.7rem auto; /* DINAikkan: 1.5rem menjadi 0.5rem */
+            position: static; 
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            padding: 15px 30px;
+        }
+
+        .layer3-header-content .japanese-label {
+            color: #2c3e50;
+            font-size: 1.6em;
+            margin: 0.7rem 0 0.2rem 0; /* DINAikkan: 1rem menjadi 0.7rem */
+            font-weight: 600;
+        }
+
+        .layer3-header-content .english-label {
+            color: #5d6d7e;
+            font-size: 0.9em;
+            margin: 0;
+            font-weight: 400;
+        }
+        #layer3 {
+            padding-top: 0px; 
+        }
+
+        /* ======================================================= */
+        /* REVISI LAYER 3 DETAIL BOX & TOKEN (BARU) */
+        /* ======================================================= */
+
+        #result {
+            padding: 20px 30px; 
+        }
+
+        /* Mengatur Baris Detail agar Ikon, Label, dan Value Sejajar */
+        #result p {
+            /* Menggunakan FLEX untuk menyejajarkan ikon, label, dan value */
+            display: flex;
+            align-items: center; /* Sejajarkan di tengah vertikal */
+            margin: 10px 0;
+            padding: 0; 
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        #result p:last-child {
+            border-bottom: none;
+        }
+
+        /* Style Ikon di Detail Box (Tambahan Spasi) */
+        #result p .icon {
+            margin-right: 12px; /* Diberi spasi setelah ikon */
+            font-size: 1.1em;
+            color: #5d6d7e;
+            flex-shrink: 0; /* Agar ikon tidak menyusut */
+            margin-top: 2px;
+        }
+
+        /* Style untuk Label (Nama Produk, Email, dll.) */
+        #result strong {
+            width: 130px; /* Lebar tetap untuk label agar titik dua rata */ 
+            display: inline-block;
+            margin-right: 15px; /* Spasi setelah titik dua */
+            font-weight: 600;
+            color: #374151;
+            flex-shrink: 0; /* Pastikan label tidak menyusut */
+        }
+
+        /* Style Token Copy Area */
+        .token-copy-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-copy-area span {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        /* Style Token Value */
+        #displayToken {
+            font-size: 1.1em;
+            font-weight: 700;
+            font-family: monospace;
+            color: #0d9488;
+            word-break: break-all;
+            flex-grow: 1;
+        }
+
+        .copy-button {
+            background: #d1d5db;
+            color: #374151;
+            padding: 4px 8px; /* DIKECILKAN */
+            border-radius: 6px;
+            font-size: 0.8em; /* Font lebih kecil */
+            margin-left: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 55px; /* Lebar tetap kecil */
+            flex-shrink: 0;
+        }
+        .copy-button:hover {
+            background: #a1a1aa;
+        }
+
+        /* Text petunjuk copy */
+        .copy-hint {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+            text-align: right;
+            font-style: italic;
+        }
+
+        /* ======================================================= */
+        /* FORM ELEMENTS (LANJUTAN) */
+        /* ======================================================= */
+        .form-group { 
+            margin-bottom: 1.5rem; 
+        }
+        .form-group label {  
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            color: #374151; 
+            font-size: 0.95em;
+        }
+        
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-with-icon .icon {
+            position: absolute;
+            left: 15px;
+            color: #9ca3af;
+            font-size: 1.1em;
+            pointer-events: none;
+        }
+        .form-input, select { 
+            width: 100%; 
+            padding: 12px 12px 12px 45px;
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px; 
+            box-sizing: border-box; 
+            color: #333;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus, select:focus { 
+            border-color: #5b7efc; 
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(91, 126, 252, 0.3); 
+            background: #fff;
+        }
+        
+        .text-small { font-size: 0.85em; color: #7f8c8d; margin-top: 5px; }
+        /* ======================================================= */
+        /* BUTTONS (LANJUTAN) */
+        /* ======================================================= */
+        button { 
+            display: block; 
+            width: 100%; 
+            padding: 14px 20px; 
+            margin-top: 25px; 
+            border-radius: 10px; 
+            border: none; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s; 
+            text-decoration: none;
+            font-size: 1.1em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        #btnVerify, #btnAgree, #btnCreateToken, #btnAksesSoal { 
+            background: #5b7efc; 
+            color: #fff; 
+        }
+        button:hover:not(:disabled) { 
+            background: #4a6fe0; 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:disabled { 
+            background: #cccccc; 
+            cursor: not-allowed; 
+            opacity: 0.8; 
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .back-button { 
+            background: #95a5a6; 
+            color: #fff; 
+            margin-top: 15px; 
+        }
+        .back-button:hover:not(:disabled) {
+            background: #7f8c8d;
+        }
+
+        /* ======================================================= */
+        /* MESSAGES & STATUS, CHECKBOX STYLES (LANJUTAN) */
+        /* ======================================================= */
+        .hidden { display: none !important; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        
+        #result { 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            padding: 15px; margin-top: 20px; 
+            border-radius: 10px; 
+            background: rgba(255, 255, 255, 0.8); 
+        }
+        #result p { margin: 8px 0; padding: 4px; border-bottom: 1px dashed #e5e7eb; }
+        #result p:last-child { border-bottom: none; }
+        
+        input[type="checkbox"] { 
+            width: auto; margin-right: 10px; margin-top: 0; padding: 0; 
+            transform: scale(1.1);
+        }
+        /* forceRenew dipertahankan untuk JS, walau tidak ditampilkan */
+        label[for="syarat"], label[for="persetujuan"], label[for="forceRenew"] { 
+            margin-top: 0 !important; cursor: pointer; display: inline-flex; align-items: center; 
+            font-weight: normal; color: #555;
+        }
+
+        /* ======================================================= */
+        /* MEDIA QUERIES (RESPONSIVE FIX) */
+        /* ======================================================= */
+        @media only screen and (max-width: 650px) {
+            body { padding: 1rem; }
+            .container {
+                width: 95%; padding: 1.5rem; margin: 1rem auto;
+            }
+            h1 { font-size: 1.8em; }
+            .subtitle { font-size: 1em; }
+            .stage-title { font-size: 1.1em; margin-bottom: 1.5rem; }
+            .nexa-logo-center {
+                margin: 1rem 0 1.5rem 0;
+                padding: 8px;
+            }
+            .nexa-logo-center img {
+                max-width: 150px;
+            }
+            .form-group label { font-size: 0.9em; }
+            .form-input, select, button {
+                padding: 10px 10px 10px 40px; font-size: 15px;
+            }
+            .input-with-icon .icon { left: 10px; font-size: 1em; }
+            button { padding: 12px 15px; font-size: 1em; margin-top: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        
+        <div class="header-section hidden-on-layer2">
+            <h1 class="japanese-text">ようこそ、[BRAND NAME]へ！</h1>
+            <p class="subtitle">Brandname Prototype Brandname Prototype</p>
+            
+            <div class="nexa-text-logo" id="nexaLogo"> 
+                <h2>[BRAND NAME]</h2>
+                <p class="slogan">Slogan, Text Prototype</p>
+            </div>
+            
+        </div>
+        <h2 class="stage-title hidden-on-layer2">あなたの挑戦はここから始まる！</h2>
+
+        <div id="layer1"> 
+            
+            <div class="form-group">
+                <label for="namaInput">Nama Lengkap</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user icon"></i>
+                    <input type="text" id="namaInput" class="form-input" placeholder="Nama Lengkap Anda" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="emailInput">Email</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope icon"></i>
+                    <input type="email" id="emailInput" class="form-input" placeholder="email@contoh.com" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phoneInput">Nomor WhatsApp</label>
+                <div class="input-with-icon">
+                    <i class="fab fa-whatsapp icon"></i>
+                    <input type="text" id="phoneInput" class="form-input" placeholder="Contoh: 6281234567890" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="productInput">Pilih Produk Akses</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-box icon"></i>
+                    <select id="productInput" class="form-input" required>
+                        <option value="" disabled selected>--- Pilih Produk ---</option>
+                    </select>
+                </div>
+            </div>
+
+            <p id="message1" class="text-small error"></p>
+            <button id="btnVerify">Verifikasi</button>
+        </div>
+        <div id="layer2" class="hidden">
+            <h2 style="font-weight: 600;">🧾 KETENTUAN AKSES SISTEM</h2>
+
+            <div id="syaratContent">
+                <p>Silakan baca dan setujui syarat dan ketentuan berikut:</p>
+                <div style="
+                    border: 1px solid rgba(91, 126, 252, 0.3); 
+                    background: #fafafa; 
+                    padding: 20px; 
+                    max-height: 180px; 
+                    overflow-y: auto; 
+                    margin-bottom: 15px; 
+                    font-size: 0.9em; 
+                    color: #4b5563; 
+                    border-radius: 10px;
+                    line-height: 1.5;
+                ">
+                    <p><strong>Perhatian:</strong> Ketentuan berikut berlaku untuk seluruh pengguna sistem akses soal [BRAND NAME]. Mohon dibaca dengan saksama sebelum melanjutkan.</p>
+                    <p><strong>Masa Berlaku Token:</strong> Setiap token memiliki masa berlaku tertentu dan tidak dapat diperpanjang setelah kedaluwarsa.</p>
+                    <p><strong>Batas Penggunaan Perangkat:</strong> Token hanya dapat digunakan pada maksimal dua perangkat. Mengganti browser atau aplikasi akan dihitung sebagai perangkat berbeda. Token yang diakses lebih dari dua perangkat akan terblokir otomatis, dan pihak [BRAND NAME] tidak bertanggung jawab.</p>
+                    <p><strong>Larangan dan Hak Cipta:</strong> Dilarang keras menyebarkan, menduplikasi, atau menggunakan materi soal [BRAND NAME] untuk tujuan komersial tanpa izin tertulis dari pihak [BRAND NAME]. Pelanggaran terhadap ketentuan ini dapat dikenakan sanksi sesuai Undang-Undang Hak Cipta yang berlaku di Indonesia.</p>
+                    <p><strong>Kebijakan Privasi:</strong> Data pribadi Anda (Nama, Email, dan Nomor HP) digunakan semata-mata untuk proses autentikasi dan pencatatan hasil kuis. Data tersebut tidak akan disebarkan atau dibagikan kepada pihak mana pun di luar [BRAND NAME].</p>
+                    <p style="font-weight: 600; margin-top: 15px;">Dengan menekan tombol checklist persetujuan dibawah ini, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh ketentuan di atas.</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <p>
+                    <input type="checkbox" id="syarat"> 
+                    <label for="syarat">Saya telah membaca ketentuan diatas dan telah mengerti</label>
+                </p>
+                <p>
+                    <input type="checkbox" id="persetujuan"> 
+                    <label for="persetujuan">Saya menyetujui ketentuan yang berlaku</label>
+                </p>
+                <p class="hidden"> <input type="checkbox" id="forceRenew"> 
+                    <label for="forceRenew">Renew token (buat token baru meskipun yang lama masih valid).</label>
+                </p>
+            </div>
+            <button id="btnAgree" disabled>Lanjut ke Pembuatan Token</button>
+            <button type="button" id="btnBackToLayer1" class="back-button">Kembali ke Verifikasi</button>
+            <p id="message2" class="error" style="margin-top: 15px;"></p>
+        </div>
+        <div id="layer3" class="hidden">
+            
+            <div class="header-section layer3-header-content"> 
+                <div class="nexa-text-logo"> 
+                    <h2>[BRAND NAME]</h2>
+                    <p class="slogan">Slogan, Text Prototype</p>
+                </div>
+                <h3 class="japanese-label">アクセス情報パネル</h3> 
+                <p class="english-label">Access Information Panel</p> 
+            </div>
+
+            <div id="result">
+                <p><i class="fas fa-box icon"></i> <strong>Nama Produk</strong> <span id="displayProduct">N/A</span></p>
+                <p><i class="fas fa-user icon"></i> <strong>Nama User</strong> <span id="displayNama">N/A</span></p>
+                <p><i class="fas fa-envelope icon"></i> <strong>Email</strong> <span id="displayEmail">N/A</span></p>
+                <p><i class="fab fa-whatsapp icon"></i> <strong>Phone</strong> <span id="displayPhone">N/A</span></p>
+                <hr style="border-top: 1px dashed #e5e7eb; margin: 10px 0;">
+
+                <p class="token-copy-area">
+                    <span>
+                        <i class="fas fa-key icon"></i> <strong>Token Akses</strong> 
+                        <span id="displayToken" class="success">N/A</span>
+                    </span>
+                    <button class="copy-button" onclick="copyToken()">Copy</button>
+                </p>
+                <p class="copy-hint" id="copyHint">Silakan copy token ini</p>
+
+                <p><i class="fas fa-clock icon"></i> <strong>Expired</strong> <span id="displayExpired">N/A</span></p>
+            </div>
+    
+            <p id="message3" class="success" style="margin-top: 15px; text-align: center;">
+                <span style="font-weight: bold; font-size: 1.2em;">トークンが作成されました</span><br>
+                <span style="font-size: 0.9em; color: #374151;">Token has been created</span>
+            </p>
+    
+            <button id="btnAksesSoal">Akses Halaman Soal</button>
+            <button type="button" id="btnBackToLayer1Again" class="back-button">Mulai Ulang Verifikasi</button>
+        </div>
+    </div>
+    
+<script>
+        // ====================================================================
+        // A. KONFIGURASI & VARIABEL GLOBAL
+        // ====================================================================
+
+        // ⚠️ GANTI URL INI DENGAN URL /exec DEPLOYMENT TERBARU ANDA:
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyOsHyXtghuU2YcTt2Yuv_3_LyjydYZiSk4SWv_cZkkRsrVWxUv5keOIQ5UwDoL7udyOg/exec"; 
+        
+        // URL parameter tidak lagi dari <?= ... ?> tapi dari window.location
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        let API_KEY = '';
+        let currentDeviceID = localStorage.getItem('NEXA_DEVICE_ID');
+        const LOCAL_STORAGE_KEY = 'NEXA_USER_DATA'; 
+        let USER_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
+        
+        // Elemen-elemen UI
+        const UI = {
+            layer1: document.getElementById('layer1'),
+            layer2: document.getElementById('layer2'),
+            layer3: document.getElementById('layer3'),
+            nexaLogo: document.getElementById('nexaLogo'),
+            hiddenElements: document.querySelectorAll('.hidden-on-layer2'),
+
+            msg1: document.getElementById('message1'),
+            msg2: document.getElementById('message2'),
+            msg3: document.getElementById('message3'), 
+
+            inputNama: document.getElementById('namaInput'),
+            inputEmail: document.getElementById('emailInput'),
+            inputPhone: document.getElementById('phoneInput'),
+            inputProduct: document.getElementById('productInput'), 
+
+            syarat: document.getElementById('syarat'),
+            persetujuan: document.getElementById('persetujuan'),
+            forceRenew: document.getElementById('forceRenew'),
+            btnAgree: document.getElementById('btnAgree'),
+            
+            resultBox: document.getElementById('result'),
+            displayNama: document.getElementById('displayNama'),
+            displayProduct: document.getElementById('displayProduct'),
+            displayEmail: document.getElementById('displayEmail'),
+            displayPhone: document.getElementById('displayPhone'),
+            displayToken: document.getElementById('displayToken'),
+            displayExpired: document.getElementById('displayExpired'),
+            btnAksesSoal: document.getElementById('btnAksesSoal')
+        };
+
+        // ====================================================================
+        // B. UTILITY: API CALLER (PENGGANTI google.script.run)
+        // ====================================================================
+
+        async function apiCall(actionName, dataPayload = {}) {
+            console.log(`[API] Memanggil: ${actionName}`, dataPayload);
+            document.body.style.cursor = 'wait'; // Indikator loading
+
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({
+                        action: actionName,
+                        payload: dataPayload
+                    })
+                });
+
+                const result = await response.json();
+                document.body.style.cursor = 'default';
+                console.log(`[API] Respon ${actionName}:`, result);
+                return result;
+
+            } catch (error) {
+                document.body.style.cursor = 'default';
+                console.error("[API] Error:", error);
+                return { success: false, message: "Gagal terhubung ke server. Cek koneksi internet." };
+            }
+        }
+
+        // ====================================================================
+        // C. UTILITY DAN FUNGSI TAMPILAN
+        // ====================================================================
+
+        function updateLayerHeader(layerNumber) {
+            if (layerNumber === 2 || layerNumber === 3) {
+                UI.hiddenElements.forEach(el => el.classList.add('hidden-element')); 
+                UI.nexaLogo.classList.add('top-right');
+            } else { 
+                UI.hiddenElements.forEach(el => el.classList.remove('hidden-element'));
+                UI.nexaLogo.classList.remove('top-right');
+            }
+        }
+
+        function showLayer(activeLayer) {
+            [UI.layer1, UI.layer2, UI.layer3].forEach(layer => layer.classList.add('hidden'));
+            activeLayer.classList.remove('hidden');
+            window.scrollTo(0, 0); 
+            
+            if (activeLayer === UI.layer2 || activeLayer === UI.layer3) {
+                updateLayerHeader(2);
+            } else {
+                updateLayerHeader(1);
+            }
+        }
+
+        function setMessage(targetElement, message, isSuccess = false) {
+            targetElement.classList.remove('error', 'success');
+            targetElement.classList.add(isSuccess ? 'success' : 'error');
+            targetElement.innerHTML = message;
+        }
+
+        function generateDeviceID() {
+            if (!currentDeviceID) {
+                currentDeviceID = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                localStorage.setItem('NEXA_DEVICE_ID', currentDeviceID);
+            }
+        }
+
+        function saveUserData(data, accessFile = 'Quiz.html') {
+            USER_DATA = {
+                nama: data.nama,
+                email: data.email,
+                phone: data.phone,
+                product: data.product,
+                accessFile: accessFile
+            };
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(USER_DATA));
+        }
+
+        function resetFlowAndShowLayer1() {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            USER_DATA = {};
+            
+            UI.inputNama.value = '';
+            UI.inputEmail.value = '';
+            UI.inputPhone.value = '';
+            UI.inputProduct.value = ''; 
+            UI.syarat.checked = false;
+            UI.persetujuan.checked = false;
+            if(UI.forceRenew) UI.forceRenew.checked = false;
+            UI.btnAgree.disabled = true;
+
+            setMessage(UI.msg1, '');
+            setMessage(UI.msg2, '');
+            setMessage(UI.msg3, '');
+
+            showLayer(UI.layer1);
+        }
+        
+        function copyToken() {
+            const token = UI.displayToken.textContent;
+            navigator.clipboard.writeText(token).then(() => {
+                const copyHint = document.getElementById('copyHint');
+                copyHint.textContent = '✅ Token berhasil disalin!';
+                copyHint.style.color = '#27ae60';
+                setTimeout(() => {
+                    copyHint.textContent = 'Silakan copy token ini';
+                    copyHint.style.color = '#7f8c8d';
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin token: ', err);
+                alert('Gagal menyalin token. Silakan salin manual.');
+            });
+        }
+
+        // ====================================================================
+        // D. DEFINISI FUNGSI FLOW (LOGIKA UTAMA - DIREVISI KE apiCall)
+        // ====================================================================
+        
+        function renderLayer3Content(nama, email, phone, product, token, expired) {
+            UI.displayNama.textContent = nama;
+            UI.displayEmail.textContent = email;
+            UI.displayPhone.textContent = phone;
+            UI.displayProduct.textContent = product;
+            UI.displayToken.textContent = token;
+            UI.displayExpired.textContent = expired;
+            
+            UI.btnAksesSoal.textContent = 'Akses Halaman Soal';
+            UI.btnAksesSoal.setAttribute('data-token', token);
+
+            UI.msg3.innerHTML = '<span style="font-weight: bold; font-size: 1.2em;">トークンが作成されました</span><br><span style="font-size: 0.9em; color: #374151;">Token has been created</span>';
+        }
+
+        /**
+         * FUNGSI UTAMA PEMBUATAN TOKEN
+         */
+        function createTokenAndRenderLayer3() {
+            setMessage(UI.msg3, "Membuat Token Akses...", true);
+            UI.btnAksesSoal.disabled = true;
+
+            if (!USER_DATA.email) {
+                setMessage(UI.msg3, "Data pengguna hilang. Mulai dari awal.");
+                resetFlowAndShowLayer1();
+                return;
+            }
+            
+            const forceRenew = UI.forceRenew ? UI.forceRenew.checked : false; 
+            
+            const payload = {
+                apiKey: API_KEY,
+                email: USER_DATA.email,
+                phone: USER_DATA.phone,
+                product: USER_DATA.product,
+                syarat: true, 
+                persetujuan: true, 
+                forceRenew: forceRenew
+            };
+
+            // REVISI: Menggunakan apiCall
+            apiCall('createToken', payload).then(response => {
+                UI.btnAksesSoal.disabled = false;
+                
+                if (response.success) {
+                    const token = response.data.token;
+                    const expired = response.data.expired;
+                    
+                    setMessage(UI.msg3, "✅ " + response.message, true);
+                    renderLayer3Content(USER_DATA.nama, USER_DATA.email, USER_DATA.phone, USER_DATA.product, token, expired);
+                } else {
+                    setMessage(UI.msg3, response.message || "❌ Gagal membuat token.");
+                }
+            });
+        }
+        
+        function checkAdvancedAutoSkip(userData) {
+            // REVISI: Menggunakan apiCall
+            apiCall('checkTokenStatus', userData).then(response => {
+                if (response.success && response.data.skipToLayer3) {
+                    // KASUS: LOMPAT KE LAYER 3
+                    const accessFile = response.data.accessFile || 'Quiz.html';
+                    saveUserData(userData, accessFile); 
+
+                    renderLayer3Content(response.data.nama, userData.email, userData.phone, userData.product, response.data.token, response.data.expired);
+                    setMessage(UI.msg3, `✅ Akses Cepat Terdeteksi! Berlaku hingga ${response.data.expired}.`);
+                    showLayer(UI.layer3);
+                } else {
+                    // KASUS: Mulai dari Layer 1
+                    showLayer(UI.layer1);
+                    UI.inputNama.value = userData.nama || '';
+                    UI.inputEmail.value = userData.email || '';
+                    UI.inputPhone.value = userData.phone || '';
+                    UI.inputProduct.value = userData.product || '';
+                    setMessage(UI.msg1, response.message || 'Silakan verifikasi ulang data Anda.');
+                }
+            });
+        }
+
+        // ====================================================================
+        // E. INTEGRASI SERVER: PEMUATAN AWAL
+        // ====================================================================
+
+        function populateProductDropdown(products) {
+            const dropdown = UI.inputProduct;
+            dropdown.innerHTML = '<option value="" disabled selected>--- Pilih Produk ---</option>';
+    
+            products.forEach(product => {
+                if (typeof product === 'object' && product !== null && product.name) {
+                    const option = document.createElement('option');
+                    option.value = product.name; 
+                    option.textContent = product.name;
+                    dropdown.appendChild(option);
+                }
+            });
+            
+            // Cek URL Params (jika ada product=XYZ di link)
+            const prodParam = urlParams.get('product');
+            if (prodParam) {
+                dropdown.value = prodParam;
+                // Cek apakah value valid di dropdown, jika ya disable
+                if (dropdown.value === prodParam) {
+                    dropdown.setAttribute('disabled', true);
+                }
+            }
+        }
+
+        function loadInitialConfig() {
+            generateDeviceID();
+            setMessage(UI.msg1, 'Memuat konfigurasi awal...', true);
+
+            // 1. Ambil API Key (Optional, bisa di-hardcode jika mau lebih cepat)
+            // Disini kita pakai dummy request untuk trigger backend sekalian cek koneksi
+            // Sebenarnya API Key client side tidak terlalu krusial jika backend validasi ulang
+            // Kita akan minta product list saja langsung.
+            
+            // REVISI: Langsung minta Product List (API Key bisa diurus nanti)
+            // Atau kita hardcode API Key sementara di variabel global jika diperlukan untuk identifikasi
+            
+            apiCall('getProductList').then(response => {
+                console.log("Response Produk Diterima:", response);
+
+                if (response.success && Array.isArray(response.data) && response.data.length > 0) {
+                    populateProductDropdown(response.data); 
+                
+                    if (USER_DATA.email && USER_DATA.phone && USER_DATA.product) {
+                        checkAdvancedAutoSkip(USER_DATA);
+                    } else {
+                        showLayer(UI.layer1);
+                    }
+                } else {
+                    setMessage(UI.msg1, response.message || "Gagal memuat daftar produk.", false);
+                    showLayer(UI.layer1);
+                }
+            });
+            
+            // Kita asumsikan API_KEY sudah diatur di backend atau tidak wajib dari client untuk getProductList
+            // Jika wajib, Anda harus fetch 'getApiKeyForClient' dulu.
+            // Untuk efisiensi, saya sarankan getProductList tidak butuh API Key di backend.
+        }
+        
+        // ====================================================================
+        // F. LISTENERS (TOMBOL KLIK)
+        // ====================================================================
+
+        // F.1. LAYER 1: VERIFIKASI
+        document.getElementById('btnVerify')?.addEventListener('click', () => {
+            const nama = UI.inputNama.value.trim();
+            const email = UI.inputEmail.value.trim();
+            const phone = UI.inputPhone.value.trim();
+            const product = UI.inputProduct.value.trim();
+
+            if (!nama || !email || !phone || !product) {
+                setMessage(UI.msg1, "Mohon isi semua kolom data dan pilih produk.");
+                return;
+            }
+
+            setMessage(UI.msg1, "Memverifikasi data...");
+
+            // Kita kirim API Key kosong dulu jika belum punya, atau ambil dari backend sebelumnya
+            // Idealnya API Key ditaruh di konstanta atas jika statis untuk frontend ini
+            const payload = { apiKey: API_KEY, nama, email, phone, product };
+
+            // REVISI: Menggunakan apiCall
+            apiCall('verifyData', payload).then(response => {
+                if (response.success) {
+                    setMessage(UI.msg1, "✅ " + response.message, true);
+                    
+                    const accessFile = response.data.accessFile || 'Quiz.html';
+                    saveUserData(payload, accessFile); 
+                    
+                    if (response.data.tokenExists) {
+                        renderLayer3Content(nama, email, phone, product, response.data.token, response.data.expired);
+                        setMessage(UI.msg3, `✅ Token Aktif Terdeteksi! Berlaku hingga ${response.data.expired}.`);
+                        showLayer(UI.layer3);
+                    } else {
+                        showLayer(UI.layer2);
+                    }
+
+                } else {
+                    setMessage(UI.msg1, response.message || "❌ Data tidak valid.");
+                }
+            });
+        });
+        
+        // F.2. LAYER 2: PERSETUJUAN
+        [UI.syarat, UI.persetujuan].forEach(checkbox => {
+            checkbox?.addEventListener('change', () => {
+                UI.btnAgree.disabled = !(UI.syarat.checked && UI.persetujuan.checked);
+            });
+        });
+
+        document.getElementById('btnAgree')?.addEventListener('click', () => {
+            setMessage(UI.msg2, ''); 
+            showLayer(UI.layer3);
+            createTokenAndRenderLayer3(); 
+        });
+
+        document.getElementById('btnBackToLayer1')?.addEventListener('click', () => showLayer(UI.layer1));
+
+        // F.3. LAYER 3: REDIRECT
+        document.getElementById('btnBackToLayer1Again')?.addEventListener('click', resetFlowAndShowLayer1);
+
+        UI.btnAksesSoal?.addEventListener('click', () => {
+            const token = UI.btnAksesSoal.getAttribute('data-token');
+            const targetFile = USER_DATA.accessFile || 'Quiz.html'; 
+            
+            if (token && targetFile) {
+                setMessage(UI.msg3, `Mengalihkan ke halaman ${targetFile.replace('.html', '')}...`, true);
+                
+                // REVISI: Redirect standar HTML (bukan lewat backend GAS)
+                // Kita asumsikan file Quiz.html ada di folder yang sama di Netlify
+                const redirectUrl = `${targetFile}?token=${encodeURIComponent(token)}&product=${encodeURIComponent(USER_DATA.product)}`;
+                
+                window.location.href = redirectUrl; 
+            } else {
+                setMessage(UI.msg3, 'Token atau File Akses tidak ditemukan.');
+            }
+        });
+
+        // ====================================================================
+        // G. INISIALISASI
+        // ====================================================================
+        document.addEventListener('DOMContentLoaded', loadInitialConfig);
+    </script>
+</body>
+</html>
