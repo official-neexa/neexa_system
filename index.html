@@ -556,7 +556,7 @@
         // URL parameter tidak lagi dari <?= ... ?> tapi dari window.location
         const urlParams = new URLSearchParams(window.location.search);
         
-        let API_KEY = '';
+        let API_KEY = 'ANE14EXA10TES0125';
         let currentDeviceID = localStorage.getItem('NEXA_DEVICE_ID');
         const LOCAL_STORAGE_KEY = 'NEXA_USER_DATA'; 
         let USER_DATA = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
@@ -821,36 +821,33 @@
 
         function loadInitialConfig() {
             generateDeviceID();
+            // Set pesan loading awal
             setMessage(UI.msg1, 'Memuat konfigurasi awal...', true);
 
-            // 1. Ambil API Key (Optional, bisa di-hardcode jika mau lebih cepat)
-            // Disini kita pakai dummy request untuk trigger backend sekalian cek koneksi
-            // Sebenarnya API Key client side tidak terlalu krusial jika backend validasi ulang
-            // Kita akan minta product list saja langsung.
-            
-            // REVISI: Langsung minta Product List (API Key bisa diurus nanti)
-            // Atau kita hardcode API Key sementara di variabel global jika diperlukan untuk identifikasi
-            
+            // Panggil API untuk minta daftar produk
             apiCall('getProductList').then(response => {
                 console.log("Response Produk Diterima:", response);
 
                 if (response.success && Array.isArray(response.data) && response.data.length > 0) {
+                    // 1. Isi Dropdown
                     populateProductDropdown(response.data); 
                 
+                    // 2. Cek apakah user ini user lama (Auto Skip)
                     if (USER_DATA.email && USER_DATA.phone && USER_DATA.product) {
                         checkAdvancedAutoSkip(USER_DATA);
                     } else {
+                        // --- PERBAIKAN DI SINI ---
+                        // Jika user baru, hilangkan pesan loading & tampilkan form
                         showLayer(UI.layer1);
+                        // Ubah pesan menjadi instruksi, bukan lagi "Memuat..."
+                        setMessage(UI.msg1, 'Silakan isi data verifikasi Anda.'); 
+                        // -------------------------
                     }
                 } else {
                     setMessage(UI.msg1, response.message || "Gagal memuat daftar produk.", false);
                     showLayer(UI.layer1);
                 }
             });
-            
-            // Kita asumsikan API_KEY sudah diatur di backend atau tidak wajib dari client untuk getProductList
-            // Jika wajib, Anda harus fetch 'getApiKeyForClient' dulu.
-            // Untuk efisiensi, saya sarankan getProductList tidak butuh API Key di backend.
         }
         
         // ====================================================================
