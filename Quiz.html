@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXA System - Akses Konten Kuis</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ======================================================= */
+        /* HARMONISASI & BASE STYLING (DARI INDEX.HTML) */
+        /* ======================================================= */
+        html, body {
+            height: 100%;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif;
+            margin: 0; padding: 0; 
+            background: linear-gradient(135deg, #a7b7eb 0%, #7d8be0 100%) !important;
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto; 
+            position: relative;
+        }
+        
+        .container { 
+            max-width: 850px; 
+            width: 90%; 
+            margin: 2rem auto; 
+            padding: 2.5rem; 
+            background: rgba(255, 255, 255, 0.7); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            position: relative;
+        }
+        
+        .container.quiz-mode {
+            /* Perlebar kontainer dari 850px ke 1100px */
+            max-width: 1100px; 
+
+            /* TAMBAHKAN BARIS INI */
+            width: 95%; /* Ini akan mencegahnya meluber di layar laptop */
+    
+            /* Kurangi padding agar layout kuis punya lebih banyak ruang */
+            padding: 1.5rem; 
+        }
+
+        h1 { color: #2c3e50; font-size: 2.2em; margin-bottom: 1rem; font-weight: 700; text-align: center; }
+        h2, h3 { color: #34495e; font-weight: 600; }
+        h2 { border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 1.5rem; }
+        
+        /* Logo Styling */
+        .nexa-text-logo {
+            background-color: #D3F1EE;
+            border-radius: 12px;
+            padding: 15px 30px;
+            margin: 0 auto 10px auto;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .nexa-text-logo h2.logo-text {
+            color: #2C6367;
+            font-size: 1.8em;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom: none;
+        }
+        .nexa-text-logo p.slogan {
+            color: #3C8388;
+            font-size: 0.9em;
+            margin: -5px 0 0 0;
+            font-weight: 400;
+        }
+        
+        /* TAMBAHKAN BLOK CSS INI UNTUK NAMA PRODUK */
+        #quizNameDisplay {
+            text-align: center; 
+    
+            /* Perbesaran dan Penebalan (Sesuai Permintaan) */
+            font-size: 1.6em; 
+            font-weight: 700; 
+            color: #34495e; 
+            letter-spacing: -0.5px; 
+    
+            /* Jarak */
+            margin-top: 15px; 
+            margin-bottom: 25px; 
+    
+            /* Kerapihan Teks Panjang */
+            word-wrap: break-word; 
+            line-height: 1.2; 
+
+            /* WARNA DAN FONT DEFAULT YANG DIBUTUHKAN DARI INLINE STYLE LAMA */
+            display: block; /* Tambahkan ini agar margin auto bekerja jika diperlukan */
+        }
+        
+        /* Sub Header Layer 4 */
+        .layer4-subheader {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .layer4-subheader .japanese-label {
+            color: #2c3e50;
+            font-size: 1.6em;
+            margin: 0.5rem 0 0.2rem 0;
+            font-weight: 600;
+        }
+        .layer4-subheader .english-label {
+            color: #5d6d7e;
+            font-size: 0.9em;
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        /* ======================================================= */
+        /* INPUT & BUTTONS (REVISI LAYER 4) */
+        /* ======================================================= */
+        .form-input-wrapper {
+            position: relative;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .form-input-wrapper .icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1.1em;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .form-input {
+            width: 100%; 
+            padding: 12px 15px 12px 45px; /* Padding kiri untuk ikon */
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px; 
+            box-sizing: border-box; 
+            color: #333;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus { 
+            border-color: #5b7efc; 
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(91, 126, 252, 0.3); 
+            background: #fff;
+        }
+
+        /* BUTTONS HARMONISASI */
+        button { 
+            padding: 14px 20px; 
+            margin-top: 15px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            transition: all 0.3s; 
+            border: none;
+            color: #fff;
+            background: #5b7efc; /* Warna utama dari Index.html */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        button:hover:not(:disabled) { 
+            background: #4a6fe0; 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        button:disabled { background: #cccccc; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
+        
+        #btnValidateToken { width: 100%; margin-bottom: 25px; } /* Tombol Penuh di bawah Input */
+        
+        #btnBackToGateway { background: #7f8c8d; max-width: 300px; margin: 25px auto 0; display: block; }
+        #btnBackToGateway:hover { background: #607d8b; }
+        
+        /* UTILITY */
+        .hidden { display: none !important; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        
+        /* TIMER DISPLAY (Harmonisasi) */
+        #timerDisplay { 
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600; 
+            font-size: 1.4em; 
+            background: rgba(254, 242, 242, 0.9);
+            color: #ef4444; 
+            padding: 12px 15px; 
+            border: 1px solid rgba(252, 165, 165, 0.5); 
+            border-radius: 12px; 
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            text-align: center;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ======================================================= */
+        /* QUIZ CONTAINER & OPTIONS (REVISI SOAL) */
+        /* ======================================================= */
+        #categoryNav { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            margin-bottom: 30px;
+            margin-top: 15px;
+        }
+        #categoryNav button {
+            flex: 1; 
+            min-width: 150px;
+            max-width: 250px;
+            background: #3498db; 
+            width: auto;
+        }
+        #categoryNav button:hover { background: #2980b9; }
+
+        #quizContent { border: none; padding: 0; margin-top: 20px; }
+        #questionList > div { 
+            padding: 20px; 
+            margin-bottom: 30px; 
+            border: 1px solid #d1d5db; 
+            border-left: 6px solid #5b7efc; /* Warna harmonis */
+            border-radius: 12px; 
+            background: #fff;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        label { 
+            display: block !important; 
+            padding: 10px 15px; 
+            margin-top: 8px !important; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-size: 1em; 
+            border: 1px solid #e5e7eb; 
+            line-height: 1.4;
+            transition: all 0.2s;
+        }
+        label:hover { background: #f3f4f6; border-color: #5b7efc; }
+        #questionList input[type="radio"]:checked + label { 
+            background: #e0f2fe; 
+            border-color: #5b7efc; 
+            font-weight: 600; 
+            color: #1e40af;
+        }
+        #questionList input[type="radio"] { 
+            width: auto; margin-right: 15px; margin-top: 0; padding: 0; transform: scale(1.1); 
+        }
+
+        /* Styling untuk memastikan Furigana rata tengah/terbagi di atas Kanji */
+        /* Menggunakan FLEX LAYOUT versi awal */
+        ruby {
+            display: inline-flex; /* Memastikan ruang lingkup rendering yang tepat */
+            flex-direction: column; /* Mengatur Kanji dan Furigana vertikal */
+            align-items: center; /* Meratakan secara horizontal (optional) */
+        }
+
+        rt {
+            /* Ruby Text: Furigana */
+            line-height: 1; /* Mengurangi spasi vertikal */
+            font-size: 0.6em; /* Ukuran yang lebih kecil */
+            user-select: none; /* Mencegah terpilih saat pengguna klik kanji */
+            text-align: center; /* Memastikan furigana rata tengah di atas kanji */
+            white-space: nowrap; /* Mencegah pemisahan kata (wrap) */
+    
+            /* Memastikan RT selalu di atas Kanji */
+            display: block;
+            width: 100%;
+        }
+
+        /* ======================================================= */
+        /* BARU: STYLING UNTUK LAYER 5 (KATA PENGANTAR) */
+        /* ======================================================= */
+
+        /* Kelas ini akan ditambahkan ke <body> via JavaScript 
+          untuk mengubah tema dari Layer 4 ke Layer 5/6.
+        */
+        body.digital-paper-bg {
+          background: #FCFCF7;
+          background: linear-gradient(90deg, rgba(252, 252, 247, 1) 20%, rgba(138, 194, 237, 1) 100%) !important;
+        }
+
+        /* Kotak Utama (Card Tengah) dari Layer 5 */
+        .intro-card {
+          background-color: #FCFCF7;
+          border-radius: 8px 8px 12px 12px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+          padding: 40px 60px;
+          width: 720px;
+          max-width: 90%;
+          margin: auto;
+          text-align: center;
+          box-sizing: border-box;
+        } /* <-- TAMBAHKAN KURUNG KURAWAL PENUTUP INI */
+
+        /* PINDAHKAN BLOK INI KELUAR */
+        .l5-hello,
+        .l5-main-info {
+            text-align: left;
+        }
+
+        /* === BAGIAN BARU UNTUK DESAIN BARU === */
+
+        /* (BARU) Box untuk "WELCOME" */
+        .l5-header-box {
+            border: 2px solid #333;
+            padding: 15px 20px;
+            margin: 0 auto 25px auto; /* Centered, dengan jarak bawah */
+            max-width: 500px; /* Batas lebar */
+            border-radius: 6px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        /* (BARU) Teks "WELCOME" */
+        .l5-header-box h3 {
+            font-family: 'Poppins', sans-serif; /* Kita tetap pakai Poppins */
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2E3A59;
+            margin: 0 0 5px 0;
+            border-bottom: none; /* Override h2/h3 default */
+        }
+        /* (BARU) Teks "Nihongo Electronic..." */
+        .l5-header-box p {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: #444;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* (BARU) Menggantikan .intro-card h2 lama */
+        .l5-hello {
+            font-weight: 600;
+            font-size: 1.5rem; /* Lebih kecil dari "WELCOME" */
+            color: #333;
+            margin: 30px 0 15px 0;
+            border-bottom: none; /* Override h2 default */
+        }
+
+        /* (BARU) Menggantikan .intro-card p dan .test-info lama */
+        .l5-main-info {
+            font-weight: 700; /* Dibuat tebal */
+            font-size: 1.3rem; /* Dibuat besar */
+            color: #2E3A59;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        /* (BARU) Teks "Apakah kamu sudah siap..." */
+        .l5-sub-info {
+            display: block;
+            margin-top: 10px;
+            font-weight: 400; /* Normal */
+            font-size: 1rem; /* Lebih kecil */
+            color: #555;
+        }
+        /* Kotak Peringatan */
+        .warning-box {
+          background: rgba(255, 230, 200, 0.4);
+          border: 1px solid #D9534F;
+          border-radius: 8px;
+          padding: 16px;
+          margin-top: 24px;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .warning-header {
+          font-weight: 600;
+          color: #D9534F;
+          margin-bottom: 10px;
+        }
+
+        /* Tombol untuk sembunyikan/tampilkan peringatan */
+        .toggle-warning {
+          background: none;
+          border: 1px solid #D9534F;
+          color: #D9534F;
+          padding: 4px 12px;
+          font-size: 12px;
+          border-radius: 6px;
+          margin-top: 10px;
+          cursor: pointer;
+          width: auto; /* Override style button default */
+          box-shadow: none; /* Override style button default */
+        }
+        .toggle-warning:hover {
+          background: rgba(217, 83, 79, 0.1);
+          transform: none; /* Override style button default */
+        }
+
+
+        /* Tombol "Mulai Tantangan" */
+        .start-btn {
+          background: #4A90E2;
+          color: white;
+          font-weight: 600;
+          padding: 12px 36px;
+          border: none;
+          border-radius: 8px;
+          margin-top: 32px;
+          cursor: pointer;
+          transition: background 0.3s ease, transform 0.1s ease;
+          width: auto; /* Override style button default */
+          
+        }
+
+        .start-btn:hover {
+          background: #357ABD !important; /* !important untuk override style :hover default */
+          transform: scale(1.02) !important;
+        }
+        .start-btn:disabled {
+          background: #cccccc;
+        }
+
+        /* ======================================================= */
+        /* PERBAIKAN CSS FOOTER (Menggantikan Aturan Lama) */
+        /* ======================================================= */
+
+        /* 1. Mengatur "soal diperiksa oleh:" */
+        .checker {
+            font-size: 13px !important; /* Tambahkan !important */
+            color: #777;
+            margin-top: 30px; /* Jarak dari tombol "Mulai Tantangan" */
+            text-align: right; /* Rata Kanan */
+            margin-bottom: 0;  /* Hapus spasi bawah */
+            padding-bottom: 0; /* Hapus spasi bawah */
+            line-height: 1.4; /* Tambahkan untuk jaga jarak baris */
+        }
+
+        /* 2. Mengatur "© 2025 NEEXA System..." */
+        .intro-card footer {
+            font-size: 13px !important; /* Tambahkan !important */
+            color: #777;
+            margin-top: 5px; /* Jarak "agak kebawah" dari baris di atasnya */
+            text-align: right; /* Rata Kanan */
+            line-height: 1.4; /* Tambahkan untuk jaga jarak baris */
+        }
+
+        /* Tambahan untuk memastikan semua teks di footer juga kecil */
+        .intro-card footer p,
+        .intro-card footer span {
+            font-size: 13px !important; /* Targetkan elemen p dan span di dalam footer */
+            line-height: 1.4;
+        }
+
+        /* ======================================================= */
+        /* FASE 2: CSS BARU UNTUK LAYOUT LAYER 6 (DESAIN 2 PANEL) */
+        /* ======================================================= */
+
+        /* WARNA TEMA (Bisa disesuaikan nanti) */
+        :root {
+            --l6-bg-panel: #FFFFFF; /* Latar belakang panel */
+            --l6-bg-main: #f4f7f6; /* Latar belakang area main */
+            --l6-border-color: #E0E0E0;
+            --l6-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --l6-header-footer-bg: #FFFFFF;
+            --l6-primary-color: #4A90E2; /* Biru */
+        }
+
+        /* 1. WADAH UTAMA 3 BAGIAN (HEADER, MAIN, FOOTER) */
+        .quiz-layout-container {
+            display: grid;
+            /* Baris 1: auto (setinggi header) */
+            /* Baris 2: 1fr (mengisi sisa ruang) */
+            /* Baris 3: auto (setinggi footer) */
+            grid-template-rows: auto 1fr auto;
+    
+            width: 100%;
+            /* Kita set tinggi minimum agar pas di dalam kartu */
+            min-height: 75vh; 
+            background: var(--l6-bg-main);
+            border-radius: 8px;
+            overflow: hidden; /* Penting agar shadow tidak bocor */
+            border: 1px solid var(--l6-border-color);
+        }
+
+        /* 2. HEADER (Atas) */
+        #l6-header {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 20px;
+            background: var(--l6-header-footer-bg);
+            border-bottom: 1px solid var(--l6-border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        #l6-product-name {
+            font-weight: 600;
+        }
+        #l6-user-info {
+            font-weight: 400;
+            color: #555;
+        }
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #E0E0E0;
+            border-radius: 4px;
+            height: 8px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        #l6-progress-bar {
+            height: 100%;
+            background-color: var(--l6-primary-color);
+            width: 0%; /* Nanti diisi JS */
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        /* 3. KONTEN UTAMA (Tengah) - 2 PANEL */
+        #l6-main {
+            display: grid;
+            /* Kolom 1: 220px (Navigasi Kiri) */
+            /* Kolom 2: 1fr (Sisa Ruang untuk Soal) */
+            grid-template-columns: 150px 1fr;
+            overflow-y: auto; /* Jika kontennya panjang */
+        }
+
+        /* 4. PANEL KIRI (Navigasi Nomor) */
+        #l6-nav-panel {        
+            background: var(--l6-bg-panel);
+            border-right: 1px solid var(--l6-border-color);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Biar bisa scroll nomor */
+        }
+        .nav-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--l6-border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .nav-panel-header span {
+            font-weight: 600;
+            color: #333;
+        }
+        /* Tombol Sembunyikan Navigasi */
+        #l6-toggle-nav {
+            display: none; /* <-- TAMBAHKAN INI UNTUK MENYEMBUNYIKAN TOMBOL */
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;        
+            line-height: 28px;
+            /* Override style 'button' default */
+            min-width: 28px;
+            width: 28px;
+            color: #333;
+            box-shadow: none;
+        }
+        #l6-toggle-nav:hover {
+            background: #e0e0e0;
+        }
+        /* Daftar Nomor Soal (ul) */
+        #l6-question-list-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column; /* <-- TAMBAHKAN INI */
+            gap: 10px; /* Jarak antar nomor */
+        }
+
+        /* (Ini hanya style dasar, nanti kita warnai di Fase 3) */
+        #l6-question-list-nav li {
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: 1px solid var(--l6-border-color);
+            border-radius: 50%; /* Lingkaran */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        #l6-question-list-nav li:hover {
+            background: #e0e0e0;
+        }
+
+        /* 5. PANEL KANAN (Area Soal) */
+        #l6-question-panel {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Mendorong tombol nav ke bawah */
+            overflow-y: auto;
+        }
+        #l6-question-content {
+            flex-grow: 1; /* Mengisi ruang yang ada */
+       }
+
+        /* Navigasi Kategori (yang kita pindah) */
+        #l6-category-nav-new {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            /* === GANTI DENGAN 4 BARIS INI === */
+            height: 100%;            /* Ambil tinggi penuh dari parent (#l6-question-content) */
+            justify-content: center; /* Rata tengah Vertikal */
+            align-items: center;     /* Rata tengah Horizontal */
+            margin-top: 0;           /* Hapus margin agar bisa rata tengah sempurna */
+        }
+
+        #l6-category-nav-new button {
+            /* Menggunakan style tombol kategori lama */
+            background: #3498db;
+            width: auto;     /* <-- TAMBAHKAN INI */
+            min-width: 250px; /* <-- Tambahkan ini agar tombol tidak terlalu kecil */
+            padding: 14px 28px; /* <-- Pastikan padding-nya cukup */
+        }
+
+        #l6-category-nav-new button:hover {
+            background: #2980b9;
+        }
+
+        /* Tombol Navigasi Soal (Kembali, Lewati, Lanjut) */
+        #l6-question-nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid var(--l6-border-color);
+            margin-top: 20px;
+        }
+        #l6-question-nav-buttons button {
+            width: auto; /* Override width 100% */
+        }
+        #l6-btn-skip {
+            background: #f39c12; /* Oranye */
+        }
+        #l6-btn-skip:hover {
+            background: #e67e22;
+        }
+
+        /* 6. FOOTER (Bawah) */
+        #l6-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--l6-header-footer-bg);
+            border-top: 1px solid var(--l6-border-color);
+            z-index: 10;
+        }
+        #l6-timer {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #D9534F; /* Merah */
+        }
+        #l6-btn-submit-category {
+            background: #2ECC71; /* Hijau */
+            width: auto; /* Override width 100% */
+        }
+        #l6-btn-submit-category:hover {
+            background: #27ae60;
+        }
+
+        /* 7. POP-UP KONFIRMASI (Modal) */
+        #l6-popup-confirm {
+            position: fixed; /* Tampil di atas segalanya */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .popup-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        .popup-content p {
+            font-size: 1.1rem;
+            color: #333;
+            margin-top: 0;
+        }
+        .popup-buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .popup-buttons button {
+            width: 120px;
+        }
+        #l6-btn-confirm-yes {
+            background: #D9534F; /* Merah */
+        }
+        #l6-btn-confirm-no {
+            background: #777; /* Abu-abu */
+        }
+
+        /* ======================================================= */
+        /* FASE 4c: CSS BARU UNTUK MEWARNAI TOMBOL & SOAL */
+        /* ======================================================= */
+
+        /* Warna Tombol Navigasi Kiri */
+        .nav-q-unanswered {
+            background: #f0f0f0;
+            border-color: #ddd;
+            color: #555;
+        }
+        .nav-q-unanswered:hover { background: #e0e0e0; }
+
+        .nav-q-active {
+            background: var(--l6-primary-color) !important;
+            border-color: var(--l6-primary-color) !important;
+            color: #fff !important;
+            transform: scale(1.1);
+        }
+
+        .nav-q-answered {
+            background: #2ECC71; /* Hijau */
+            border-color: #27ae60;
+            color: #fff;
+        }
+        .nav-q-answered:hover { background: #27ae60; }
+
+        .nav-q-skipped {
+            background: #F39C12; /* Oranye/Kuning */
+            border-color: #e67e22;
+            color: #fff;
+        }
+        .nav-q-skipped:hover { background: #e67e22; }
+
+        /* Styling Panel Kanan (Soal & Pilihan) */
+        .passage-box {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            font-style: italic;
+            color: #333;
+        }
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #222;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            border-bottom: none; /* Override */
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-label {
+            display: block;
+            background: #fff;
+            border: 1px solid var(--l6-border-color);
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: #333;
+            /* Override style 'label' lama */
+            margin: 0 !important; 
+            /* === TAMBAHKAN 2 BARIS INI === */
+            width: 100%;
+            box-sizing: border-box; /* Sangat penting agar padding tidak menambah lebar */
+        }
+        .option-label:hover {
+            background: #f7f9fc;
+            border-color: var(--l6-primary-color);
+        }
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+        .option-label input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: #1e40af;
+        }
+        /* Style saat radio button dipilih */
+        .option-label input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: var(--l6-primary-color);
+        }
+        .option-label:has(input[type="radio"]:checked) {
+            background: #e0f2fe; 
+            border-color: var(--l6-primary-color); 
+        }
+
+        /* ======================================================= */
+        /* FASE 5: CSS UNTUK HALAMAN SKOR AKHIR */
+        /* ======================================================= */
+        #accessContent #l6-final-score-page {
+            padding: 30px;
+            text-align: center;
+            color: #333;
+            /* === TAMBAHKAN 2 BARIS INI === */
+            max-width: 700px; /* Batasi lebar halaman skor */
+            margin: 0 auto;   /* Buat rata tengah di dalam kontainer 1100px */
+        }
+        #l6-final-score-page h2 {
+            font-size: 2rem;
+            color: #111;
+            border-bottom: none;
+        }
+        #l6-final-score-page h3 {
+            font-size: 1.5rem;
+            color: var(--l6-primary-color);
+            margin-top: 10px;
+        }
+        .status-lulus, .status-gagal {
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .status-lulus {
+            background: #e6f7ec;
+            border: 2px solid #2ECC71;
+            color: #27ae60;
+        }
+        .status-gagal {
+            background: #fdeeee;
+            border: 2px solid #D9534F;
+            color: #D9534F;
+        }
+        .score-total {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .score-details {
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            max-width: 400px;
+            text-align: left;
+        }
+        .score-details li {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+        }
+        .score-reload-btn {
+            /* Pinjam style tombol "Mulai Tantangan" L5 */
+            background: #4A90E2;
+            color: white;
+            font-weight: 600;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 32px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: auto; 
+        }
+        .score-reload-btn:hover {
+            background: #357ABD !important;
+        }
+
+        /* === Tambahan untuk Gaya Nomor Soal (Revisi 4) === */
+        /* * 1. Membuat judul soal (h3) menjadi flex container
+         * agar lingkaran dan teks bisa sejajar rapi.
+         */
+        .question-title {
+            display: flex;
+            align-items: baseline; /* Menyejajarkan lingkaran & teks secara vertikal */
+            line-height: 1.5;    /* Beri jarak baris jika teks soalnya panjang */
+        }
+
+        /* === TAMBAHKAN BLOK CSS BARU INI === */
+        .question-text-wrapper {
+            display: block; /* Ini akan membuat <br> berfungsi */
+            width: 100%;
+            padding-left: 4px; /* Opsi: beri sedikit jarak dari lingkaran */
+        }
+
+        /* * 2. Memberi gaya pada lingkaran nomor (q-number-display)
+         * Kita tiru style dari .nav-q-active
+         */
+        .q-number-display {
+            /* Ukuran dan bentuk (meniru .nav-q-active) */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+    
+            /* Warna (meniru .nav-q-active) */
+            background: var(--l6-primary-color);
+            border: 1px solid var(--l6-primary-color);
+            color: #fff;
+            font-weight: 600;
+    
+            /* Font dan Jarak */
+            font-size: 1rem;    /* Ukuran font angka di dalam lingkaran */
+            line-height: 1;
+            margin-right: 12px; /* Jarak antara lingkaran dan teks soal */
+    
+            /* Mencegah lingkaran 'menyusut' jika teks soal terlalu panjang */
+            flex-shrink: 0; 
+        }
+
+        /* ======================================================= */
+        /* FASE 4d: CSS UNTUK SEMBUNYIKAN NAV PANEL KIRI (DINON AKTIFKAN) */
+        /* ======================================================= */
+
+        //#l6-main.nav-collapsed {
+        //  /* Sembunyikan kolom pertama, buat kolom kedua 100% */
+        //  grid-template-columns: 0px 1fr;
+        //}
+
+        //#l6-main.nav-collapsed #l6-nav-panel {
+        //  /* Sembunyikan panelnya */
+        //  display: none;
+        //}
+
+        //#l6-toggle-nav {
+        //  transition: transform 0.3s ease;
+        //}
+
+        //#l6-main.nav-collapsed #l6-toggle-nav {
+        //  /* Putar tombol panahnya */
+        //  transform: rotate(180deg);
+        //}
+
+        /* ======================================================= */
+        /* MEDIA QUERIES (RESPONSIVE FIX) */
+        /* ======================================================= */
+    
+        @media only screen and (max-width: 650px) {
+            .container {
+                margin: 1rem auto;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.6em; 
+            }
+        
+            #categoryNav {
+                flex-direction: column; 
+                gap: 5px;
+            }
+
+            #categoryNav button {
+                max-width: 100%; 
+                font-size: 1em;
+                padding: 10px;
+            }
+        
+            .form-input, button {
+                padding: 10px;
+                font-size: 14px;
+            }
+        
+            #questionList > div {
+                padding: 15px;
+                margin-bottom: 20px;
+                border-left: 4px solid #3b82f6; 
+            }
+        
+            label {
+                font-size: 1em;
+                padding: 8px 10px;
+            }
+        }
+
+        .japanese-text-line {
+            display: block; /* Memaksa baris baru */
+            margin-top: 8px; /* Jarak dari teks Indonesia */
+            font-weight: 400; /* Teks Jepang mungkin lebih tipis */
+            font-size: 1.1rem; /* Sedikit lebih kecil dari teks utama */
+            color: #333; /* Pastikan warnanya konsisten */
+        }
+
+        /* ======================================================= */
+        /* FASE 6: CSS UNTUK HALAMAN REVIEW */
+        /* ======================================================= */
+
+        /* Gaya tombol review di halaman skor */
+        .review-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .review-btn:hover {
+            background: #f0f0f0;
+            border-color: #ddd;
+        }
+        .review-btn strong {
+            color: #333;
+        }
+        .review-btn .review-btn-text {
+            float: right;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--l6-primary-color);
+        }
+
+        /* Wadah per soal di halaman review */
+        .review-question-container {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Gaya label jawaban di halaman review */
+        .option-label-review {
+            display: block;
+            background: #fff;
+            border: 1px solid var(--l6-border-color);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            margin: 0 !important; 
+            width: 100%;
+            box-sizing: border-box;
+            opacity: 0.7; /* Abu-abukan opsi yang tidak relevan */
+        }
+        .option-label-review input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        /* Jawaban Benar (Hijau) */
+        .option-label-review.review-correct {
+            background: #e6f7ec;
+            border-color: #2ECC71;
+            color: #27ae60;
+            font-weight: 600;
+            opacity: 1.0;
+        }
+
+        /* Jawaban Pengguna yang Salah (Merah) */
+        .option-label-review.review-incorrect {
+            background: #fdeeee;
+            border-color: #D9534F;
+            color: #D9534F;
+            font-weight: 600;
+            opacity: 1.0;
+            text-decoration: line-through;
+        }
+      
+        /* ======================================================= */
+        /* TAMBAHAN MEDIA QUERIES RESPONSIVE (OLEH GEMINI) */
+        /* ======================================================= */
+
+        /* === A. Target Tablet & Smartphone (800px ke bawah) === */
+        @media (max-width: 800px) {
+    
+            /* 1. Perkecil padding container kuis di tablet */
+            .container.quiz-mode {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            /* 2. INI YANG UTAMA: 
+               Ubah layout 2 kolom (#l6-main) menjadi 1 kolom */
+            #l6-main {
+                grid-template-columns: 1fr; /* Paksa jadi 1 kolom penuh */
+            }
+
+            /* 3. Ubah panel navigasi kiri (yang sekarang jadi di atas) */
+            #l6-nav-panel {
+                /* Hapus border kanan, ganti jadi border bawah */
+                border-right: none;
+                border-bottom: 1px solid var(--l6-border-color);
+        
+                /* Jangan biarkan dia scroll vertikal, tapi horizontal */
+                overflow-y: hidden;
+                overflow-x: auto; 
+
+                /* Atur padding agar lebih ramping */
+                padding: 10px;
+            }
+
+            /* 4. Buat daftar nomor soal jadi horizontal */
+            #l6-question-list-nav {
+                /* Ganti dari 'column' (vertikal) menjadi 'row' (horizontal) */
+                flex-direction: row; 
+                gap: 8px; /* Kurangi jarak antar lingkaran */
+        
+                /* Tambahkan ini agar tidak 'wrap' ke baris baru */
+                white-space: nowrap; 
+            }
+
+            /* 5. Sembunyikan header "Nomor Soal" di HP agar ringkas */
+            .nav-panel-header {
+                 display: none;
+            }
+
+            /* 6. Beri padding yang wajar untuk panel soal */
+            #l6-question-panel {
+                /* Kurangi padding di HP */
+                padding: 15px;
+            }
+        }
+
+        /* === B. Target Khusus Smartphone (500px ke bawah) === */
+        @media (max-width: 500px) {
+
+             /* 7. Buat header & footer kuis jadi 'bertumpuk' */
+            #l6-header .header-info,
+            #l6-footer {
+                flex-direction: column; /* Susun ke bawah */
+                align-items: flex-start; /* Rata kiri */
+                gap: 8px;
+            }
+    
+            /* 8. Rata tengahkan tombol submit di footer */
+            #l6-footer {
+                align-items: center; /* Buat tombolnya rata tengah */
+            }
+            #l6-btn-submit-category {
+                width: 100%; /* Buat tombol submit jadi lebar penuh */
+            }
+
+            /* 9. Perkecil font soal */
+            .question-title {
+                font-size: 1.1rem;
+            }
+            .option-label {
+                font-size: 0.95rem; /* Teks pilihan jawaban */
+                padding: 10px 12px;
+            }
+
+            /* 10. Perkecil lingkaran nomor soal di panel soal (q-number-display) */
+            .q-number-display {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+                margin-right: 8px;
+            }
+    
+            /* 11. Perbaiki tombol navigasi (Next/Prev) */
+            #l6-question-nav-buttons {
+                 gap: 10px;
+            }
+            #l6-question-nav-buttons button {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ======================================================= */
+        /* TAMBAHAN CSS - PERBAIKAN TAMPILAN REVIEW (OLEH GEMINI) */
+        /* ======================================================= */
+
+        /* * 1. Perbaikan Teks Soal (Lingkaran + Teks) 
+         * Ini memaksa lingkaran dan teks soal di halaman review
+         * untuk tampil sejajar (side-by-side).
+         */
+        .review-question-container .question-title {
+            display: flex !important;
+            align-items: baseline !important;
+        }
+        .review-question-container .question-text-wrapper {
+            display: block !important; /* Pastikan teks mengalir normal */
+        }
+
+
+        /* * 2. Perbaikan Opsi Jawaban (Radio Button + Teks)
+         * Ini memaksa radio button dan teks pilihan
+         * untuk sejajar di dalam label.
+         */
+        .option-label-review {
+            display: flex !important; /* Ubah dari 'block' menjadi 'flex' */
+            align-items: baseline;   /* Sejajarkan radio dan teks */
+            opacity: 0.8; /* Buat opsi netral sedikit pudar */
+        }
+
+        /* * 3. Perbaikan Pilihan Benar/Salah
+         * Memastikan opsi yang benar/salah tetap terlihat jelas.
+         */
+        .option-label-review.review-correct,
+        .option-label-review.review-incorrect {
+            opacity: 1.0 !important;
+        }
+
+        /* * 4. Perbaikan Teks di dalam Opsi
+         * Memastikan teks di dalam span (termasuk furigana)
+         * tidak merusak layout flex.
+         */
+        .option-label-review span {
+            display: inline; /* Paksa teks mengalir normal */
+            margin-left: 8px; /* Beri jarak dari radio button */
+        }
+        .option-label-review input[type="radio"] {
+            margin-right: 0; /* Hapus margin lama, kita ganti dengan margin-left di span */
+            flex-shrink: 0;  /* Mencegah radio button 'gepeng' */
+        }
+
+
+        /* ======================================================= */
+        /* CSS PERBAIKAN UNTUK MODE REVIEW (OLEH GEMINI) */
+        /* ======================================================= */
+
+        .quiz-layout-container.in-review-mode #l6-nav-panel {
+          display: none;
+        }
+        .quiz-layout-container.in-review-mode #l6-main {
+          grid-template-columns: 1fr;
+        }
+        .quiz-layout-container.in-review-mode #l6-question-panel {
+          justify-content: flex-start !important;
+        }
+        .quiz-layout-container.in-review-mode #l6-question-content {
+          flex-grow: 0 !important;
+        }
+
+    </style>
+    </head>
+
+<body>
+    <div class="container">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="nexa-text-logo">
+                <h2 class="logo-text">[BRAND NAME]</h2>
+                <p class="slogan">Slogan, Text Prototype</p>
+            </div>
+        </div>
+
+        <div id="layer4"> 
+            <p id="quizNameDisplay"></p>
+            
+            <div class="layer4-subheader">
+                <h2 class="japanese-label">トークン認証ポータル</h2>
+                <p class="english-label">Token Authentication Portal</p>
+            </div>
+            
+            <div id="tokenInputArea" class="form-group hidden">
+                <div class="form-input-wrapper">
+                    <i class="fas fa-key icon"></i>
+                    <input type="text" id="tokenInput" class="form-input" 
+                           placeholder="Masukkan token akses Anda" /> 
+                </div>
+                <button id="btnValidateToken">Validate & Continue</button>
+            </div>
+        </div>
+
+        <div id="layer5" class="hidden">
+          <div class="intro-card">
+            <div class="l5-header-box">
+                <h3 class="l5-welcome-logo">✦ WELCOME ✦</h3>
+                <p>Brandname Prototype Brandname Prototype</p>
+            </div>
+
+            <h2 class="l5-hello">Hello <span id="welcomeUserName">[Nama Pengguna]</span></h2>
+
+            <p class="l5-main-info">
+                Tantanganmu sudah tersedia, tantanganmu <b><span id="testInfoTitle">[Nama Produk]</span></b>,
+                memiliki kategori <b><span id="testInfoCategoryCount">[X]</span></b> dan <b><span id="testInfoQuestionCount">[Y]</span></b> 
+                soal sudah menunggumu!
+                <br>
+                <span class="l5-sub-info">Apakah kamu sudah siap menaklukannya?</span>
+            </p>
+
+            <div class="warning-box">
+                <div class="warning-header">⚠️ PERINGATAN ⚠️</div>
+                <p id="warningText">Harap dikerjakan sendiri tanpa bantuan apa pun untuk menguji kemampuanmu yang sebenarnya.</p>
+                <button id="btnToggleWarning" class="toggle-warning">Sembunyikan</button>
+            </div>
+
+            <button id="btnStartChallenge" class="start-btn">Mulai Tantangan</button>
+
+            <p class="checker">soal diperiksa oleh: <span id="testInfoChecker">[Nama Pengecek]</span></p>
+            <footer>© 2025 [BRAND NAME] System | Powered by Google Apps Script</footer>
+          </div>
+        </div> 
+
+        <p id="message4" class="error" style="text-align: center; margin-top: 15px;"></p>
+
+        <div id="accessContent" class="hidden">
+      
+            <div class="quiz-layout-container">
+                <header id="l6-header">
+                    <div class="header-info">
+                        <span id="l6-product-name">[Nama Produk]</span>
+                        <span id="l6-user-info">[Nama Peserta] - [Kategori Soal]</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="l6-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </header>
+
+                <main id="l6-main">
+                    <aside id="l6-nav-panel">
+                        <div class="nav-panel-header">
+                            <span>Nomor Soal</span>
+                            <button id="l6-toggle-nav" title="Sembunyikan Nomor">⮜</button>
+                        </div>
+                        <ul id="l6-question-list-nav"></ul>
+                    </aside>
+
+                    <section id="l6-question-panel">
+                        <div id="l6-question-content">
+                            <div id="l6-category-nav-new">
+                                <button data-category="knowledge">🧩 Language Knowledge</button>
+                                <button data-category="reading" class="hidden">📝 Reading</button>
+                                <button data-category="listening" class="hidden">🎧 Listening</button>
+                            </div>
+                        </div>
+                        <div id="l6-question-nav-buttons" class="hidden">
+                            <button id="l6-btn-back">⬅️ Kembali</button>
+                            <button id="l6-btn-skip">🔁 Lewati</button>
+                            <button id="l6-btn-next">Lanjut ➡️</button>
+                        </div>
+                    </section>
+                </main>
+
+                <footer id="l6-footer">
+                    <span id="l6-timer">Waktu Tersisa: 00:00</span>
+                    <button id="l6-btn-submit-category" class="hidden">Kirim Jawaban & Lanjut</button>
+                </footer>
+            </div>
+
+            <div id="l6-popup-confirm" class="hidden">
+                <div class="popup-content">
+                    <p>Apakah Anda sudah memastikan semua soal telah dijawab?</p>
+                    <div class="popup-buttons">
+                        <button id="l6-btn-confirm-yes">Ya, Lanjutkan</button>
+                        <button id="l6-btn-confirm-no">Tidak, Kembali</button>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+        <div id="layer-review-page" class="hidden">
+            </div>
+
+        <button type="button" id="btnBackToGateway" onclick="redirectToGateway()" style="margin-top: 30px;">Kembali ke Verifikasi (Gateway)</button>
+        
+    </div>
+</body>
+
+<script>
+    // ====================================================================
+    // A. KONFIGURASI & VARIABEL GLOBAL (REVISI NETLIFY)
+    // ====================================================================
+    
+    // 1. Konfigurasi Koneksi
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzi1z_sFYK4KSqlvX6-l6MzORtXlOhBQRmHC8IHqRFCoglxARwT48_fspQ20Bc02OzHww/exec";
+    let API_KEY = 'ANE14EXA10TES0125'; 
+
+    // 2. Baca Parameter URL
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // 3. Variabel Global
+    let currentDeviceID = localStorage.getItem('NEXA_DEVICE_ID');
+    let currentProduct = urlParams.get('product') || '';
+    let USER_DATA = {}; 
+
+    // 4. Konstanta Tetap
+    const OPTIONS_KEYS = ['A', 'B', 'C', 'D']; 
+    const KKM_PASSING_GRADE = 80.0; 
+
+    // 5. State Management
+    let quizState = {
+        currentCategory: null,   
+        currentQuestionIndex: -1, 
+        questions: [],            
+        questionStates: {},    
+        timeLimit: 0,             
+        timerInterval: null       
+    };
+
+    // Laporan Skor & Review
+    let finalScoreReport = {
+        'knowledge': null, 'reading': null, 'listening': null
+    };
+    let reviewDataStore = {}; 
+    let allQuestionsStore = {}; 
+
+    // 6. Elemen UI (UPDATED: Menambahkan layerReviewPage)
+    const UI = {
+        msg4: document.getElementById('message4'), 
+        tokenInputArea: document.getElementById('tokenInputArea'),
+        inputToken: document.getElementById('tokenInput'),
+        btnValidateToken: document.getElementById('btnValidateToken'),
+        productNameDisplay: document.getElementById('quizNameDisplay'), 
+        logoWrapper: document.querySelector('.nexa-text-logo').parentElement,
+        layer4Subheader: document.querySelector('.layer4-subheader'),
+        btnBackToGateway: document.getElementById('btnBackToGateway'),
+
+        layer5: document.getElementById('layer5'),
+        btnStartChallenge: document.getElementById('btnStartChallenge'),
+        btnToggleWarning: document.getElementById('btnToggleWarning'),
+        warningText: document.getElementById('warningText'),
+
+        accessContent: document.getElementById('accessContent'), // Layer 6
+        layerReviewPage: document.getElementById('layer-review-page'), // Layer 7 (BARU)
+        
+        l6Header: document.getElementById('l6-header'),
+        l6Main: document.getElementById('l6-main'),
+        l6Footer: document.getElementById('l6-footer'),
+
+        l6ProductName: document.getElementById('l6-product-name'),
+        l6UserInfo: document.getElementById('l6-user-info'),
+        l6ProgressBar: document.getElementById('l6-progress-bar'),
+
+        l6NavPanel: document.getElementById('l6-nav-panel'),
+        l6ToggleNav: document.getElementById('l6-toggle-nav'),
+        l6QuestionListNav: document.getElementById('l6-question-list-nav'), 
+
+        l6QuestionPanel: document.getElementById('l6-question-panel'),
+        l6CategoryNavNew: document.getElementById('l6-category-nav-new'),
+        l6QuestionContent: document.getElementById('l6-question-content'),
+        l6QuestionNavButtons: document.getElementById('l6-question-nav-buttons'),
+        l6BtnBack: document.getElementById('l6-btn-back'),
+        l6BtnSkip: document.getElementById('l6-btn-skip'),
+        l6BtnNext: document.getElementById('l6-btn-next'),
+
+        l6Timer: document.getElementById('l6-timer'),
+        l6BtnSubmitCategory: document.getElementById('l6-btn-submit-category'),
+
+        l6PopupConfirm: document.getElementById('l6-popup-confirm'),
+        l6BtnConfirmYes: document.getElementById('l6-btn-confirm-yes'),
+        l6BtnConfirmNo: document.getElementById('l6-btn-confirm-no'),
+        
+        finalSummary: document.getElementById('finalSummary')
+    };
+
+    // ====================================================================
+    // B. UTILITY DAN FUNGSI (API CALLER & HELPER)
+    // ====================================================================
+
+    async function apiCall(actionName, dataPayload = {}) {
+        console.log(`[API] Memanggil: ${actionName}`, dataPayload);
+        document.body.style.cursor = 'wait';
+
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: actionName,
+                    payload: dataPayload
+                })
+            });
+
+            const result = await response.json();
+            document.body.style.cursor = 'default';
+            console.log(`[API] Respon ${actionName}:`, result);
+            return result;
+
+        } catch (error) {
+            document.body.style.cursor = 'default';
+            console.error("[API] Error:", error);
+            alert("Gagal terhubung ke server. Cek koneksi internet.");
+            return { success: false, message: "Koneksi Error" };
+        }
+    }
+
+    function setMessage(targetElement, message, isSuccess = false) {
+        targetElement.classList.remove('error', 'success');
+        targetElement.classList.add(isSuccess ? 'success' : 'error');
+        targetElement.innerHTML = message;
+    }
+
+    function generateDeviceID() {
+        if (!currentDeviceID) {
+            currentDeviceID = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem('NEXA_DEVICE_ID', currentDeviceID);
+        }
+    }
+
+    function redirectToGateway(message) {
+        if (message) alert(message);
+        window.location.href = 'index.html'; 
+    }
+
+    // Helper Shuffle
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Helper Furigana
+    function convertFuriganaToRuby(text) {
+        if (!text || typeof text !== 'string') return text; 
+        const furiganaRegex = /([一-龯ぁ-んァ-ン]+?)\[([ぁ-んァ-ン]+?)\]/g; 
+        return text.replace(furiganaRegex, (match, kanji, furigana) => {
+            return `<ruby>${kanji}<rt>${furigana}</rt></ruby>`;
+        }).trim(); 
+    }
+    
+    // Handler Sukses Validasi
+    function handleValidationSuccess(data) {
+        USER_DATA = data.data; 
+        
+        if(!currentProduct) currentProduct = USER_DATA.product;
+        
+        document.getElementById('welcomeUserName').textContent = USER_DATA.nama || 'Peserta';
+        document.getElementById('testInfoTitle').textContent = currentProduct || '[Nama Soal]';
+        
+        // Data dummy (bisa disesuaikan)
+        document.getElementById('testInfoCategoryCount').textContent = '3';
+        document.getElementById('testInfoQuestionCount').textContent = '50';
+        document.getElementById('testInfoChecker').textContent = 'Team';
+        
+        // Sembunyikan Layer 4
+        UI.tokenInputArea.classList.add('hidden'); 
+        UI.logoWrapper.classList.add('hidden'); 
+        UI.productNameDisplay.classList.add('hidden'); 
+        UI.layer4Subheader.classList.add('hidden'); 
+        UI.btnBackToGateway.classList.add('hidden'); 
+        
+        setMessage(UI.msg4, "", true); 
+        UI.accessContent.classList.add('hidden');
+        document.body.classList.add('digital-paper-bg');
+        
+        // Tampilkan Layer 5
+        UI.layer5.classList.remove('hidden');
+    }
+
+    // FUNGSI TIMER
+    let currentTimerInterval = null; 
+
+    function startTimer(durationMinutes) {
+        if (typeof quizState !== 'undefined' && quizState.timerInterval) {
+            clearInterval(quizState.timerInterval);
+        }
+        if (currentTimerInterval) {
+            clearInterval(currentTimerInterval);
+        }
+        
+        if (durationMinutes <= 0) {
+            UI.l6Timer.classList.add('hidden');
+            return; 
+        }
+        
+        UI.l6Timer.classList.remove('hidden');
+        let time = durationMinutes * 60; 
+
+        function updateTimer() {
+            const minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            const display = `${minutes}:${seconds}`;
+
+            UI.l6Timer.textContent = `Waktu Tersisa: ${display}`;
+
+            if (time <= 0) {
+                clearInterval(currentTimerInterval);
+                if (typeof quizState !== 'undefined') clearInterval(quizState.timerInterval);
+                
+                UI.l6Timer.textContent = 'WAKTU HABIS! Mengirim Jawaban Otomatis...';
+                
+                // Auto submit
+                if(UI.l6BtnSubmitCategory) UI.l6BtnSubmitCategory.click(); 
+            }
+            time--;
+        }
+
+        updateTimer();
+        currentTimerInterval = setInterval(updateTimer, 1000);
+        
+        if (typeof quizState !== 'undefined') {
+            quizState.timerInterval = currentTimerInterval;
+        }
+    }
+
+    // ====================================================================
+    // C. FLOW LOGIC: VALIDASI TOKEN
+    // ====================================================================
+
+    function validateToken(token) {
+        if (!token || !API_KEY || !currentDeviceID) {
+             setMessage(UI.msg4, "Error konfigurasi client. Coba refresh halaman.", false);
+             return;
+        }
+             
+        setMessage(UI.msg4, "Memvalidasi Token...", true);
+        
+        const payload = { 
+            apiKey: API_KEY, 
+            token: token, 
+            deviceID: currentDeviceID 
+        };
+
+        apiCall('validateAccess', payload).then(response => {
+            if (response && response.success) {
+                handleValidationSuccess(response);
+            } else {
+                redirectToGateway(response.message || "Token invalid atau sesi berakhir.");
+            }
+        });
+    }
+    
+
+    // ====================================================================
+    // FASE 4b: MEMULAI KATEGORI (FIXED: HAPUS google.script.run)
+    // ====================================================================
+
+    function startCategory(category) {
+        console.log(`Memulai Kategori: ${category}`);
+        quizState.currentCategory = category; 
+        updateHeader(); 
+
+        // UI: Tampilkan loading
+        UI.l6QuestionContent.innerHTML = `<p style="text-align: center; font-weight: 600; padding: 20px;">Memuat soal untuk kategori ${category}...</p>`;
+        
+        // Sembunyikan menu kategori
+        if(UI.l6CategoryNavNew) UI.l6CategoryNavNew.classList.add('hidden');
+
+        // PANGGIL API (FETCH) - BUKAN GOOGLE SCRIPT RUN
+        apiCall('getQuizQuestions', { 
+            apiKey: API_KEY, 
+            category: category, 
+            product: currentProduct 
+        }).then(response => {
+            if (response.success) {
+                handleQuestionsReceived(response); 
+            } else {
+                handleQuestionsFailed(response.message);
+            }
+        });
+    }
+
+    function handleQuestionsFailed(errMsg) {
+        console.error("Gagal memuat soal:", errMsg);
+        
+        if (errMsg && (errMsg.includes('Tidak ada soal') || errMsg.includes('kosong'))) {
+            UI.l6QuestionContent.innerHTML = `<p class="error" style="text-align: center;">Kategori '${quizState.currentCategory}' kosong atau tidak tersedia.</p>`;
+            
+            const emptyScoreReport = {
+                success: true,
+                category: quizState.currentCategory,
+                score: 0.0, points: 0, maxPoints: 0, details: {} 
+            };
+            
+            setTimeout(() => {
+                handleCategorySubmitSuccess(emptyScoreReport);
+            }, 2000);
+            
+        } else {
+            UI.l6QuestionContent.innerHTML = `<p class="error" style="text-align: center;">Gagal: ${errMsg}. Silakan coba refresh halaman.</p>`;
+        }
+    }
+
+    function handleQuestionsReceived(response) {
+        if (!response.success || !response.data || !response.data.questions) {
+            handleQuestionsFailed('Data soal tidak valid dari server.');
+            return;
+        }
+
+        if (response.data.questions.length === 0) {
+            handleQuestionsFailed('Kategori kosong (0 soal).');
+            return;
+        }
+
+        console.log("Soal diterima:", response.data);
+        
+        quizState.questions = response.data.questions;
+        quizState.timeLimit = response.data.timeLimit || 0;
+        quizState.currentQuestionIndex = 0; 
+        
+        allQuestionsStore[quizState.currentCategory] = response.data.questions;
+
+        initializeQuestionStates(); 
+        UI.l6QuestionNavButtons.classList.remove('hidden'); 
+        if (UI.l6ProgressBar) UI.l6ProgressBar.parentElement.classList.remove('hidden');
+        updateHeader(); 
+        UI.l6NavPanel.classList.remove('hidden');
+        renderNavPanel(); 
+        UI.l6Footer.classList.remove('hidden');
+        
+        // Gunakan Timer Khusus Kuis (bukan global timer biasa)
+        startQuizTimerLimit(); 
+        
+        renderCurrentView(); 
+    }
+
+    function initializeQuestionStates() {
+        quizState.questionStates = {}; 
+        quizState.questions.forEach((q) => {
+            quizState.questionStates[q.id] = {
+                status: 'unanswered', 
+                answer: null        
+            };
+        });
+        const firstQuestionId = quizState.questions[0].id;
+        quizState.questionStates[firstQuestionId].status = 'active';
+    }
+
+    function updateHeader() {
+        UI.l6ProductName.textContent = currentProduct;
+        UI.l6UserInfo.textContent = `${USER_DATA.nama} - ${quizState.currentCategory}`;
+
+        const totalQuestions = quizState.questions.length;
+        const answeredCount = Object.values(quizState.questionStates).filter(s => s.status === 'answered').length;
+        const progressPercent = (answeredCount / totalQuestions) * 100;
+        UI.l6ProgressBar.style.width = `${progressPercent}%`;
+    }
+
+    function startQuizTimerLimit() {
+        if (quizState.timerInterval) clearInterval(quizState.timerInterval);
+
+        let timeInSeconds = quizState.timeLimit * 60;
+
+        if (timeInSeconds <= 0) {
+            UI.l6Timer.textContent = "Mode Latihan (Tanpa Waktu)";
+            return;
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeInSeconds / 60);
+            let seconds = timeInSeconds % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            UI.l6Timer.textContent = `Waktu Tersisa: ${minutes}:${seconds}`;
+
+            if (timeInSeconds <= 0) {
+                clearInterval(quizState.timerInterval);
+                UI.l6Timer.textContent = "WAKTU HABIS!";
+                submitCategory(); // Force Submit
+            }
+            timeInSeconds--;
+        }
+
+        updateTimerDisplay(); 
+        quizState.timerInterval = setInterval(updateTimerDisplay, 1000);
+    }
+
+    function renderNavPanel() {
+        UI.l6QuestionListNav.innerHTML = ''; 
+
+        quizState.questions.forEach((q, index) => {
+            const qState = quizState.questionStates[q.id];
+            const li = document.createElement('li');
+            li.textContent = index + 1; 
+            li.dataset.index = index; 
+            li.className = `nav-q-${qState.status}`; 
+            
+            li.addEventListener('click', () => {
+                navigateToQuestion(index); 
+            });        
+
+            UI.l6QuestionListNav.appendChild(li);
+        });
+    }
+
+    function renderCurrentView() {
+        try {
+            const index = quizState.currentQuestionIndex;
+            const q = quizState.questions[index];
+            const qState = quizState.questionStates[q.id];
+
+            let mediaHtml = '';
+            if (q.mediaUrl) {
+                if (quizState.currentCategory === 'listening') {
+                    mediaHtml = `<audio controls style="width: 100%;"><source src="${q.mediaUrl}" type="audio/mpeg">Browser Anda tidak mendukung audio.</audio>`;
+                } else {
+                    mediaHtml = `<img src="${q.mediaUrl}" alt="Gambar Soal" style="max-width: 100%; height: auto; border-radius: 5px; margin-bottom: 15px;">`;
+                }
+            }
+
+            let questionNumberStyled = `<span class="q-number-display">${index + 1}</span>`;
+            let processedText = convertFuriganaToRuby(q.questionText);
+
+            if (processedText.includes(':')) {
+                const parts = processedText.split(':', 2);
+                processedText = `${parts[0]}:<br><span class="japanese-text-line">${parts[1]}</span>`;
+            }
+
+            let questionTextHtml = `<h3 class="question-title">${questionNumberStyled} <div class="question-text-wrapper">${processedText}</div></h3>`;
+            if (q.passageText && q.passageText.trim() !== "") {
+                const passageContent = convertFuriganaToRuby(q.passageText); 
+                questionTextHtml = `<div class="passage-box">${passageContent}</div>` + questionTextHtml;
+            }
+
+            let optionsHtml = '<div class="options-container">';
+            const optionsArray = OPTIONS_KEYS
+                .map(key => ({ key: key, text: q.options[key] }))
+                .filter(opt => opt.text && opt.text.trim() !== ""); 
+
+            optionsArray.forEach((option) => { 
+                const displayValue = option.text.startsWith('http') 
+                    ? `<img src="${option.text}" alt="Pilihan ${option.key}" style="max-height: 80px;">` 
+                    : convertFuriganaToRuby(option.text);
+
+                const isChecked = (qState.answer === option.key) ? 'checked' : '';
+
+                optionsHtml += `
+                    <label class="option-label">
+                        <input type="radio" name="q_${q.id}" value="${option.key}" ${isChecked}>
+                        <span>${option.key}. ${displayValue}</span>
+                    </label>
+                  `;
+            });
+            optionsHtml += '</div>';
+
+            UI.l6QuestionContent.innerHTML = questionTextHtml + mediaHtml + optionsHtml;
+            
+            UI.l6BtnBack.disabled = (index === 0); 
+
+            const isLastQuestion = (index === quizState.questions.length - 1);
+            UI.l6BtnNext.classList.toggle('hidden', isLastQuestion); 
+            UI.l6BtnSubmitCategory.classList.toggle('hidden', !isLastQuestion); 
+
+        } catch (err) {
+            console.error("Error di renderCurrentView:", err);
+            UI.l6QuestionContent.innerHTML = `<p class="error">Gagal merender soal. Coba lagi.</p>`;
+        }
+    }
+
+    function navigateToQuestion(newIndex) {
+        const oldIndex = quizState.currentQuestionIndex;
+
+        if (newIndex < 0 || newIndex >= quizState.questions.length) return; 
+
+        const oldQuestionId = quizState.questions[oldIndex].id;
+        const oldState = quizState.questionStates[oldQuestionId];
+        
+        if (oldState.status === 'active') {
+            oldState.status = 'unanswered';
+        }
+
+        const newQuestionId = quizState.questions[newIndex].id;
+        const newState = quizState.questionStates[newQuestionId];
+        
+        if (newState.status !== 'answered' && newState.status !== 'skipped') {
+            newState.status = 'active';
+        }
+
+        quizState.currentQuestionIndex = newIndex;
+
+        renderCurrentView(); 
+        renderNavPanel();    
+    }
+
+    function saveAnswer(questionId, answerValue) {
+        const state = quizState.questionStates[questionId];
+        if (state) {
+            state.status = 'answered'; 
+            state.answer = answerValue; 
+            renderNavPanel();  
+            updateHeader();    
+        }
+    }
+
+
+    // ====================================================================
+    // FASE 5: SUBMIT JAWABAN & HALAMAN REVIEW (FIXED: PISAH DARI LOGIC LAMA)
+    // ====================================================================
+
+    function submitCategory() {
+        console.log(`Mengirim jawaban: ${quizState.currentCategory}`);
+        
+        UI.l6QuestionContent.innerHTML = `<p style="text-align: center; font-weight: 600; padding: 30px;">Menilai jawaban, mohon tunggu...</p>`;
+        UI.l6QuestionNavButtons.classList.add('hidden'); 
+        UI.l6Footer.classList.add('hidden');
+
+        const payload = {
+            apiKey: API_KEY,
+            email: USER_DATA.email || 'guest',
+            phone: USER_DATA.phone || '000',
+            product: currentProduct,
+            category: quizState.currentCategory,
+            answers: quizState.questionStates 
+        };
+
+        apiCall('submitCategoryAnswers', payload).then(response => {
+            if (response.success) {
+                handleCategorySubmitSuccess(response.data);
+            } else {
+                UI.l6QuestionContent.innerHTML = `<p class="error">Gagal submit: ${response.message}</p>`;
+                UI.l6Footer.classList.remove('hidden'); 
+            }
+        });
+    }
+
+    function handleCategorySubmitSuccess(scoreReport) {
+        if (!scoreReport) {
+            handleQuestionsFailed("Gagal menerima laporan skor.");
+            return;
+        }
+
+        finalScoreReport[scoreReport.category] = scoreReport;
+        if (scoreReport.details) {
+            reviewDataStore[scoreReport.category] = scoreReport.details;
+        }
+        
+        let nextCategory = null;
+        if (scoreReport.category === 'knowledge') nextCategory = 'reading';
+        else if (scoreReport.category === 'reading') nextCategory = 'listening';
+        
+        if (nextCategory) {
+            UI.l6Footer.classList.remove('hidden');
+            startCategory(nextCategory);
+        } else {
+            renderFinalScorePage();
+        }
+    }
+
+    function renderFinalScorePage() {
+        UI.accessContent.classList.add('hidden');
+
+        let totalPoints = 0;
+        let totalMaxPoints = 0;
+        let scoreHtml = '';
+        
+        const categories = ['knowledge', 'reading', 'listening'];
+        categories.forEach(cat => {
+            const report = finalScoreReport[cat];
+            if (report) { 
+                totalPoints += report.points;
+                totalMaxPoints += report.maxPoints;
+                let catName = cat.charAt(0).toUpperCase() + cat.slice(1);
+                scoreHtml += `<li>
+                    <button class="review-btn" onclick="showReview('${cat}')">
+                        <strong>${catName}:</strong> ${report.points} / ${report.maxPoints} Poin (${report.score.toFixed(1)}%) 
+                        <span class="review-btn-text">(Lihat Review)</span>
+                    </button>
+                </li>`;
+            } else {
+                scoreHtml += `<li><strong>${cat}:</strong> Tidak dikerjakan / Gagal.</li>`;
+            }
+        });
+
+        const finalPercentage = (totalMaxPoints > 0) ? (totalPoints / totalMaxPoints) * 100 : 0;
+        
+        let statusHtml = '';
+        if (finalPercentage >= KKM_PASSING_GRADE) {
+            statusHtml = `<div class="status-lulus">
+                            <strong>STATUS: LULUS</strong>
+                            (Nilai Anda ${finalPercentage.toFixed(1)}% di atas KKM ${KKM_PASSING_GRADE}%)
+                          </div>`;
+        } else {
+            statusHtml = `<div class="status-gagal">
+                            <strong>STATUS: TIDAK LULUS</strong>
+                            (Nilai Anda ${finalPercentage.toFixed(1)}% di bawah KKM ${KKM_PASSING_GRADE}%)
+                          </div>`;
+        }
+
+        const finalPageHtml = `
+            <div id="l6-final-score-page">
+                <h2>Hasil Ujian Anda</h2>
+                ${statusHtml}
+                <h3>NILAI AKHIR: ${finalPercentage.toFixed(1)}%</h3>
+                <p class="score-total">SKOR TOTAL: ${totalPoints} / ${totalMaxPoints} Poin</p>
+                <hr>
+                <h4>Rincian Skor per Kategori:</h4>
+                <ul class="score-details">${scoreHtml}</ul>
+                <button class="score-reload-btn" onclick="window.location.href = 'index.html'">Selesai & Kembali ke Awal</button>
+            </div>
+         `;
+        
+        UI.layerReviewPage.innerHTML = finalPageHtml;
+        UI.layerReviewPage.classList.remove('hidden'); 
+    }
+
+    function showReview(category) {
+        const reviewDetails = reviewDataStore[category];
+        const questions = allQuestionsStore[category];
+
+        if (!reviewDetails || !questions) {
+            alert('Data review untuk kategori ini tidak ditemukan.');
+            return;
+        }
+
+        UI.layerReviewPage.classList.add('hidden');
+
+        UI.accessContent.classList.remove('hidden');
+        UI.l6Header.classList.remove('hidden');
+        UI.l6Main.classList.remove('hidden');
+        UI.l6Footer.classList.remove('hidden');
+
+        UI.l6ProductName.textContent = `${currentProduct} - REVIEW MODE`;
+        UI.l6UserInfo.textContent = `${USER_DATA.nama || 'Peserta'} - ${category}`;
+        UI.l6ProgressBar.parentElement.classList.add('hidden'); 
+        UI.l6NavPanel.classList.add('hidden'); 
+
+        UI.l6Main.style.gridTemplateColumns = '1fr'; 
+        UI.l6QuestionContent.style.flexGrow = '0'; 
+
+        UI.l6QuestionNavButtons.classList.add('hidden'); 
+
+        UI.l6Footer.innerHTML = `<button class="score-reload-btn" onclick="returnToScorePage()">Kembali ke Halaman Skor</button>`;
+
+        let allQuestionsHtml = '';
+        
+        questions.forEach((q, index) => {
+            const detail = reviewDetails[q.id];
+            if (!detail) return;
+
+            const userAnswer = detail.answer || null; 
+            const correctAnswer = detail.correct;
+
+            let mediaHtml = '';
+            if (q.mediaUrl) {
+                if (category === 'listening') { 
+                    mediaHtml = `<audio controls style="width: 100%; margin-top: 15px;"><source src="${q.mediaUrl}" type="audio/mpeg">Browser Anda tidak mendukung audio.</audio>`;
+                } else {
+                    mediaHtml = `<img src="${q.mediaUrl}" alt="Gambar Soal" style="max-width: 100%; height: auto; border-radius: 5px; margin-top: 15px;">`;
+                }
+            }
+
+            let passageHtml = '';
+            if (q.passageText && q.passageText.trim() !== "") {
+                passageHtml = `<div class="passage-box">${convertFuriganaToRuby(q.passageText)}</div>`;
+            }
+            
+            let questionNumberStyled = `<span class="q-number-display">${index + 1}</span>`;
+            let processedText = convertFuriganaToRuby(q.questionText);
+            if (processedText.includes(':')) {
+                const parts = processedText.split(':', 2);
+                processedText = `${parts[0]}:<br><span class="japanese-text-line">${parts[1]}</span>`;
+            }
+            let questionTextHtml = `<h3 class="question-title">${questionNumberStyled} <div class="question-text-wrapper">${processedText}</div></h3>`;
+
+            let optionsHtml = '<div class="options-container">';
+            OPTIONS_KEYS.forEach(key => {
+                const optionText = q.options[key];
+                if (optionText && optionText.trim() !== "") {
+                    const isChecked = (userAnswer === key) ? 'checked' : '';
+                    let labelClass = 'option-label-review';
+
+                    if (key === correctAnswer) {
+                        labelClass += ' review-correct'; 
+                    } else if (key === userAnswer && key !== correctAnswer) {
+                        labelClass += ' review-incorrect'; 
+                    }
+
+                    const displayValue = optionText.startsWith('http') 
+                        ? `<img src="${optionText}" alt="Pilihan ${key}" style="max-height: 80px;">` 
+                        : convertFuriganaToRuby(optionText);
+
+                    optionsHtml += `
+                        <label class="${labelClass}">
+                            <input type="radio" value="${key}" ${isChecked} disabled>
+                            <span>${key}. ${displayValue}</span>
+                        </label>
+                    `;
+                }
+            });
+            optionsHtml += '</div>';
+
+            allQuestionsHtml += `<div class="review-question-container">${passageHtml}${questionTextHtml}${mediaHtml}${optionsHtml}</div>`;
+        });
+
+        UI.l6QuestionContent.innerHTML = allQuestionsHtml;
+    }
+
+    function returnToScorePage() {
+        UI.accessContent.classList.add('hidden');
+        UI.l6Main.style.gridTemplateColumns = ''; 
+        UI.l6QuestionContent.innerHTML = ''; 
+        UI.layerReviewPage.classList.remove('hidden');
+    }
+
+    // ====================================================================
+    // D. FLOW LOGIC: LISTENERS UTAMA
+    // ====================================================================
+
+    UI.l6CategoryNavNew?.addEventListener('click', (event) => { 
+        if (event.target.tagName === 'BUTTON') {
+            const category = event.target.getAttribute('data-category');
+            if (category) {
+                startCategory(category); 
+            }
+        }
+    });
+
+    UI.l6BtnBack?.addEventListener('click', () => {
+        navigateToQuestion(quizState.currentQuestionIndex - 1);
+    });
+
+    UI.l6BtnNext?.addEventListener('click', () => {
+        navigateToQuestion(quizState.currentQuestionIndex + 1);
+    });
+
+    UI.l6BtnSkip?.addEventListener('click', () => {
+        const currentIndex = quizState.currentQuestionIndex;
+        const currentQuestionId = quizState.questions[currentIndex].id;
+
+        quizState.questionStates[currentQuestionId].status = 'skipped';
+        quizState.questionStates[currentQuestionId].answer = null; 
+
+        if (currentIndex < quizState.questions.length - 1) {
+            navigateToQuestion(currentIndex + 1);
+        } else {
+            renderNavPanel(); 
+        }
+    });
+
+    UI.l6QuestionPanel?.addEventListener('change', (event) => {
+        if (event.target.type === 'radio' && event.target.name.startsWith('q_')) {
+            const qId = event.target.name.split('_')[1]; 
+            const answerValue = event.target.value;     
+            saveAnswer(qId, answerValue);
+        }
+    });
+
+    UI.l6BtnSubmitCategory?.addEventListener('click', () => {
+        UI.l6PopupConfirm.classList.remove('hidden'); 
+    });
+
+    UI.l6BtnConfirmNo?.addEventListener('click', () => {
+        UI.l6PopupConfirm.classList.add('hidden'); 
+    });
+
+    UI.l6BtnConfirmYes?.addEventListener('click', () => {
+        UI.l6PopupConfirm.classList.add('hidden'); 
+        submitCategory(); 
+    });
+
+    UI.btnStartChallenge?.addEventListener('click', () => {
+        UI.layer5.classList.add('hidden');
+        UI.accessContent.classList.remove('hidden');
+        document.querySelector('.container').classList.add('quiz-mode');
+        startCategory('knowledge'); 
+    });
+
+    // ====================================================================
+    // E. INISIALISASI (FIXED: Hapus google.script.run)
+    // ====================================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+        generateDeviceID();
+
+        const savedProduct = localStorage.getItem('NEXA_USER_DATA') ? JSON.parse(localStorage.getItem('NEXA_USER_DATA')).product : 'Produk Anda';
+        if(UI.productNameDisplay) UI.productNameDisplay.textContent = savedProduct;
+
+        // Set Listener untuk Validasi Token
+        if(UI.btnValidateToken) {
+            UI.btnValidateToken.addEventListener('click', () => { 
+                 validateToken(UI.inputToken.value.trim());
+            });
+        }
+
+        // Cek Token di URL
+        const tokenFromURL = urlParams.get('token');
+        UI.accessContent.classList.add('hidden');
+
+        if (tokenFromURL) {
+            UI.inputToken.value = tokenFromURL;
+            UI.tokenInputArea.classList.add('hidden');
+            validateToken(tokenFromURL);
+        } else {
+            UI.tokenInputArea.classList.remove('hidden');
+            setMessage(UI.msg4, '', false); 
+        }
+    });
+</script>
+</body>
+</html>
