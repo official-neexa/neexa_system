@@ -1895,56 +1895,56 @@
     // FASE 5: SUBMIT JAWABAN & HALAMAN REVIEW (FIXED: PISAH DARI LOGIC LAMA)
     // ====================================================================
 
-    function submitCategory() {
-        console.log(`Mengirim jawaban: ${quizState.currentCategory}`);
-        
-        UI.l6QuestionContent.innerHTML = `<p style="text-align: center; font-weight: 600; padding: 30px;">Menilai jawaban, mohon tunggu...</p>`;
-        UI.l6QuestionNavButtons.classList.add('hidden'); 
-        UI.l6Footer.classList.add('hidden');
-
-        const payload = {
-            apiKey: API_KEY,
-            email: USER_DATA.email || 'guest',
-            phone: USER_DATA.phone || '000',
-            product: currentProduct,
-            category: quizState.currentCategory,
-            answers: quizState.questionStates 
-        };
-
-        apiCall('submitCategoryAnswers', payload).then(response => {
-            if (response.success) {
-                handleCategorySubmitSuccess(response.data);
-            } else {
-                UI.l6QuestionContent.innerHTML = `<p class="error">Gagal submit: ${response.message}</p>`;
-                UI.l6Footer.classList.remove('hidden'); 
-            }
-        });
-    }
-
     function handleCategorySubmitSuccess(scoreReport) {
         if (!scoreReport) {
             handleQuestionsFailed("Gagal menerima laporan skor.");
             return;
         }
+        console.log("Laporan Skor Diterima:", scoreReport);
 
-        finalScoreReport[scoreReport.category] = scoreReport;
+        // Simpan Skor & Rincian
+        // Normalisasi nama kategori agar konsisten (huruf kecil semua)
+        const cleanCategory = scoreReport.category.toLowerCase().trim();
+        
+        finalScoreReport[cleanCategory] = scoreReport;
         if (scoreReport.details) {
-            reviewDataStore[scoreReport.category] = scoreReport.details;
+            reviewDataStore[cleanCategory] = scoreReport.details;
         }
         
+        // LOGIKA PINDAH KATEGORI (PERBAIKAN CASE SENSITIVE)
+        // Menggunakan .includes() agar lebih aman
         let nextCategory = null;
-        if (scoreReport.category === 'knowledge') nextCategory = 'reading';
-        else if (scoreReport.category === 'reading') nextCategory = 'listening';
         
+        if (cleanCategory.includes('knowledge')) {
+            nextCategory = 'reading';
+        } else if (cleanCategory.includes('reading')) {
+            nextCategory = 'listening';
+        }
+        
+        console.log(`Kategori saat ini: ${cleanCategory}, Lanjut ke: ${nextCategory}`);
+
         if (nextCategory) {
-            UI.l6Footer.classList.remove('hidden');
-            startCategory(nextCategory);
+            // Tampilkan pesan transisi sebentar
+            UI.l6QuestionContent.innerHTML = `<div style="text-align:center; padding:40px;">
+                <h3>Sesi ${cleanCategory} Selesai! ✅</h3>
+                <p>Melanjutkan ke sesi <b>${nextCategory}</b> dalam 2 detik...</p>
+            </div>`;
+            
+            UI.l6Footer.classList.add('hidden'); // Sembunyikan tombol submit
+            
+            setTimeout(() => {
+                UI.l6Footer.classList.remove('hidden');
+                startCategory(nextCategory);
+            }, 2000); // Jeda 2 detik agar user bisa nafas
+            
         } else {
+            // Jika tidak ada nextCategory, berarti sudah selesai (Listening selesai)
             renderFinalScorePage();
         }
     }
 
     function renderFinalScorePage() {
+        console.log("Menampilkan Halaman Skor Akhir.");
         UI.accessContent.classList.add('hidden');
 
         let totalPoints = 0;
@@ -1952,12 +1952,16 @@
         let scoreHtml = '';
         
         const categories = ['knowledge', 'reading', 'listening'];
+        
         categories.forEach(cat => {
-            const report = finalScoreReport[cat];
+            // Ambil data menggunakan key huruf kecil (karena kita sudah normalkan di atas)
+            const report = finalScoreReport[cat]; 
+            
             if (report) { 
                 totalPoints += report.points;
                 totalMaxPoints += report.maxPoints;
                 let catName = cat.charAt(0).toUpperCase() + cat.slice(1);
+                
                 scoreHtml += `<li>
                     <button class="review-btn" onclick="showReview('${cat}')">
                         <strong>${catName}:</strong> ${report.points} / ${report.maxPoints} Poin (${report.score.toFixed(1)}%) 
@@ -1965,9 +1969,12 @@
                     </button>
                 </li>`;
             } else {
-                scoreHtml += `<li><strong>${cat}:</strong> Tidak dikerjakan / Gagal.</li>`;
+                // Handle jika kategori null (misal dilewati)
+                let catName = cat.charAt(0).toUpperCase() + cat.slice(1);
+                scoreHtml += `<li><strong>${catName}:</strong> - (Tidak ada data)</li>`;
             }
         });
+
 
         const finalPercentage = (totalMaxPoints > 0) ? (totalPoints / totalMaxPoints) * 100 : 0;
         
@@ -2164,7 +2171,7 @@
     });
 
     // ====================================================================
-    // E. INISIALISASI (FIXED: Hapus google.script.run)
+    // E. INISIALISASI (PERBAIKAN LAYER 4)
     // ====================================================================
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -2182,14 +2189,21 @@
 
         // Cek Token di URL
         const tokenFromURL = urlParams.get('token');
+        
+        // FIX: Pastikan Layer Kuis (6) dan Layer Review (7) SEMBUNYI dulu
         UI.accessContent.classList.add('hidden');
+        if(UI.layerReviewPage) UI.layerReviewPage.classList.add('hidden');
 
         if (tokenFromURL) {
+            // Jika ada token di URL (dari Index.html), otomatis login
             UI.inputToken.value = tokenFromURL;
-            UI.tokenInputArea.classList.add('hidden');
+            UI.tokenInputArea.classList.add('hidden'); // Sembunyikan input
             validateToken(tokenFromURL);
         } else {
-            UI.tokenInputArea.classList.remove('hidden');
+            // Jika Buka Langsung (Manual), TAMPILKAN INPUT
+            console.log("Mode Manual: Menampilkan Input Token");
+            UI.layer4Subheader.classList.remove('hidden'); // Pastikan header layer 4 muncul
+            UI.tokenInputArea.classList.remove('hidden');  // Pastikan input muncul
             setMessage(UI.msg4, '', false); 
         }
     });
