@@ -1255,6 +1255,159 @@
           flex-grow: 0 !important;
         }
 
+        /* ======================================================= */
+        /* FASE 7: PERBAIKAN TAMPILAN DESKTOP (AGAR TIDAK KEBESARAN) */
+        /* ======================================================= */
+
+        /* Media Query khusus Laptop/PC (Layar di atas 1024px) */
+        @media screen and (min-width: 1024px) {
+
+            /* 1. Perkecil Kartu Utama */
+            .intro-card {
+                max-width: 600px; /* Lebar diperkecil dari 720px */
+                padding: 30px 40px; /* Padding dikurangi */
+                margin-top: 2vh; /* Sedikit jarak dari atas */
+            }
+
+            /* 2. Perkecil Box "WELCOME" */
+            .l5-header-box {
+                padding: 10px 15px;
+                margin-bottom: 15px;
+                max-width: 400px;
+            }
+            .l5-header-box h3 {
+                font-size: 1.4rem; /* Dikecilkan dari 1.8rem */
+            }
+            .l5-header-box p {
+                font-size: 0.9rem;
+            }
+
+            /* 3. Perkecil Sapaan & Info Utama */
+            .l5-hello {
+                font-size: 1.2rem; /* Dikecilkan dari 1.5rem */
+                margin: 20px 0 10px 0;
+            }
+            .l5-main-info {
+                font-size: 1rem; /* Dikecilkan dari 1.3rem */
+                line-height: 1.5;
+                margin-bottom: 15px;
+            }
+            .l5-sub-info {
+                font-size: 0.9rem;
+                margin-top: 5px;
+            }
+
+            /* 4. Perkecil Box Peringatan */
+            .warning-box {
+                padding: 10px 15px;
+                margin-top: 15px;
+            }
+            .warning-header {
+                font-size: 0.9rem;
+                margin-bottom: 5px;
+            }
+            #warningText {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+            .toggle-warning {
+                margin-top: 5px;
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+
+            /* 5. Tombol & Footer */
+            .start-btn {
+                margin-top: 20px;
+                padding: 10px 30px; /* Tombol lebih ramping */
+                font-size: 0.95rem;
+            }
+    
+            .checker, .intro-card footer {
+                margin-top: 15px;
+                font-size: 11px !important; /* Footer lebih kecil lagi */
+            }
+        }
+
+        /* ======================================================= */
+        /* FASE 8: FIX LAYOUT DESKTOP (FIX HEIGHT & SCROLL) */
+        /* ======================================================= */
+
+        /* Hanya berlaku untuk Desktop/Laptop (Layar lebar) */
+        @media screen and (min-width: 1024px) {
+
+            /* 1. MENGATASI MASALAH TERPOTONG DI ATAS */
+            /* Kita paksa tinggi Container Kuis agar pas di layar (90% tinggi layar) */
+            .container.quiz-mode {
+                height: 90vh;           /* Tinggi fix 90% dari viewport */
+                max-height: 800px;      /* Jangan lebih tinggi dari 800px */
+                display: flex;          /* Gunakan Flexbox */
+                flex-direction: column; /* Susunan vertikal */
+                justify-content: center; 
+                overflow: hidden;       /* Sembunyikan scroll di container luar */
+                margin-top: auto;       /* Reset margin */
+                margin-bottom: auto;
+                padding: 0 !important;  /* Hapus padding agar full */
+                border: none;           /* Hapus border luar agar bersih */
+                background: transparent;/* Transparan agar menyatu */
+                box-shadow: none;       /* Hapus bayangan luar */
+            }
+
+            /* 2. MEMASTIKAN LAYOUT DALAM MENGISI PENUH KONTAINER */
+            .quiz-layout-container {
+                height: 100%;          /* Isi penuh container .container.quiz-mode */
+                border-radius: 12px;   /* Pindah radius ke sini */
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Pindah shadow ke sini */
+                background: #fff;      /* Pindah background putih ke sini */
+                /* Grid layout sudah didefinisikan di Fase sebelumnya: auto 1fr auto */
+            }
+
+            /* 3. MEMBATASI AREA TENGAH (MAIN) AGAR TIDAK MELUBER */
+            #l6-main {
+                height: 100%;          /* Pastikan tinggi penuh */
+                overflow: hidden;      /* PENTING: Mencegah layout pecah */
+                /* Grid kolom sudah didefinisikan sebelumnya: 150px 1fr */
+            }
+
+            /* 4. SCROLLBAR KHUSUS UNTUK NAVIGASI NOMOR (KIRI) */
+            #l6-nav-panel {
+                height: 100%;          /* Tinggi mengikuti area main */
+                overflow-y: auto;      /* AKTIFKAN SCROLL VERTIKAL */
+                border-right: 1px solid #e0e0e0;
+        
+                /* Mempercantik Scrollbar (Chrome/Safari/Edge) */
+                scrollbar-width: thin; 
+                scrollbar-color: #ccc #f0f0f0;
+            }
+    
+            /* 5. SCROLLBAR KHUSUS UNTUK SOAL (KANAN) */
+            /* Agar jika soalnya panjang, hanya area kanan yang di-scroll */
+            #l6-question-panel {
+                height: 100%;          /* Tinggi mengikuti area main */
+                overflow-y: auto;      /* AKTIFKAN SCROLL VERTIKAL */
+        
+                /* Mempercantik Scrollbar */
+                scrollbar-width: thin;
+                scrollbar-color: #ccc #f0f0f0;
+            }
+
+            /* Styling Tambahan untuk Scrollbar Webkit (Chrome) */
+            #l6-nav-panel::-webkit-scrollbar,
+            #l6-question-panel::-webkit-scrollbar {
+                width: 8px;
+            }
+            #l6-nav-panel::-webkit-scrollbar-track,
+            #l6-question-panel::-webkit-scrollbar-track {
+                background: #f0f0f0;
+            }
+            #l6-nav-panel::-webkit-scrollbar-thumb,
+            #l6-question-panel::-webkit-scrollbar-thumb {
+                background-color: #ccc;
+                border-radius: 4px;
+            }
+        }
+
+
     </style>
     </head>
 
