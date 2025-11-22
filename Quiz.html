@@ -1256,111 +1256,106 @@
         }
 
         /* ======================================================= */
-        /* FASE 9: ULTIMATE DESKTOP FIX (KOTAK MERAH & SCROLL TERPISAH) */
+        /* FASE 10: FIX SCROLL & ANTI-MELAR (VERSI PAKSA) */
         /* ======================================================= */
 
         @media screen and (min-width: 1024px) {
 
-            /* 1. MEMBUAT "KOTAK MERAH" (CONTAINER FIX) */
-            .container.quiz-mode {
-                /* Kunci ukuran agar pas di layar (tidak meluber) */
-                width: 95%;
-                max-width: 1100px;
-                height: 85vh;  /* Tinggi Fix 85% dari layar monitor */
-        
-                /* Posisi Rata Tengah Sempurna */
-                margin: auto; 
-                position: relative;
-        
-                /* Reset gaya lama */
-                padding: 0 !important;
-                border: none;
-                background: transparent;
-                box-shadow: none;
-        
-                /* Flexbox untuk mengatur isinya */
-                display: flex;
-                flex-direction: column;
+            /* 1. MEMAKSA BODY AGAR TIDAK SCROLL GANDA */
+            body {
+                overflow: hidden; /* Matikan scroll di browser utama */
+                height: 100vh;
             }
 
-            /* 2. STRUKTUR DALAM (WRAPPER PUTIH) */
-            .quiz-layout-container {
-                /* Ini agar dia mengisi penuh Kotak Merah */
-                flex: 1; 
-                height: 100%; 
+            /* 2. KUNCI MATI TINGGI KONTAINER (KOTAK MERAH) */
+            .container.quiz-mode {
+                /* Gunakan !important agar tidak bisa dilanggar */
+                height: 85vh !important; 
+                max-height: 800px !important;
+                width: 95% !important;
+                max-width: 1100px !important;
         
-                /* Susunan Vertikal: Header - Main - Footer */
-                display: flex;
-                flex-direction: column;
+                /* Reset total */
+                margin: auto !important;
+                padding: 0 !important;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+        
+                /* Flex layout */
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                overflow: hidden !important; /* PENTING: Potong yang meluber keluar */
+            }
+
+            /* 3. STRUKTUR DALAM (WRAPPER PUTIH) */
+            .quiz-layout-container {
+                /* Paksa isi penuh container merah */
+                height: 100% !important; 
+                display: flex !important;
+                flex-direction: column !important;
         
                 background: #fff;
                 border-radius: 12px;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-                overflow: hidden; /* Agar radius tidak bocor */
+                overflow: hidden !important; /* Kunci radius */
             }
 
-            /* 3. HEADER & FOOTER (KOTAK HIJAU) - JANGAN MENYUSUT */
+            /* 4. HEADER & FOOTER (FIXED) */
             #l6-header, #l6-footer {
-                flex-shrink: 0; /* Tinggi tetap, tidak boleh gepeng */
+                flex: 0 0 auto; /* Jangan menyusut, jangan membesar */
                 z-index: 20;
                 background: #fff;
                 border-color: #e0e0e0;
             }
 
-            /* 4. AREA TENGAH (MAIN) - RUANG SISA */
+            /* 5. AREA TENGAH (MAIN) - KUNCI SCROLL */
             #l6-main {
-                /* AJAIBNYA DISINI: Ambil semua sisa ruang vertikal */
-                flex: 1; 
-                height: 0; /* Trik CSS agar scroll berfungsi di dalam flex */
-                min-height: 0;
+                /* Trik CSS agar Flexbox mau memunculkan scroll */
+                flex: 1 1 auto !important; 
+                height: 0 !important; /* PENTING: Ini mematikan auto-expand */
+                min-height: 0 !important; 
         
-                /* Susunan Grid Kiri-Kanan */
-                display: grid;
-                grid-template-columns: 240px 1fr; /* Kiri 240px, Kanan sisanya */
-                overflow: hidden; /* Cegah scroll ganda */
+                /* Layout Grid Kiri-Kanan */
+                display: grid !important;
+                grid-template-columns: 240px 1fr !important;
+                overflow: hidden !important;
             }
 
-            /* 5. PANEL KIRI (NOMOR) - SCROLL TERPISAH */
+            /* 6. PANEL KIRI (NOMOR) */
             #l6-nav-panel {
-                height: 100%;
-                overflow-y: auto; /* Scrollbar muncul otomatis jika panjang */
+                height: 100% !important;
+                overflow-y: auto !important; /* Paksa scroll muncul */
                 border-right: 1px solid #eee;
                 padding: 15px;
-                box-sizing: border-box;
             }
 
-            /* 6. PANEL KANAN (SOAL) - SCROLL TERPISAH */
+            /* 7. PANEL KANAN (SOAL) */
             #l6-question-panel {
-                height: 100%;
-                overflow-y: auto; /* Scrollbar muncul otomatis jika panjang */
-                padding: 30px 40px; /* Padding yang lega */
-                box-sizing: border-box;
+                height: 100% !important;
+                overflow-y: auto !important; /* Paksa scroll muncul */
+                padding: 30px 40px;
             }
 
-            /* 7. MEMPERCANTIK SCROLLBAR (Agar tidak terlihat jadul) */
+            /* 8. PERCANTIK SCROLLBAR */
             #l6-nav-panel::-webkit-scrollbar,
             #l6-question-panel::-webkit-scrollbar {
                 width: 8px;
             }
             #l6-nav-panel::-webkit-scrollbar-track,
             #l6-question-panel::-webkit-scrollbar-track {
-                background: #f9f9f9;
+                background: #f5f5f5;
             }
             #l6-nav-panel::-webkit-scrollbar-thumb,
             #l6-question-panel::-webkit-scrollbar-thumb {
-                background-color: #cbd5e1; /* Abu-abu soft */
+                background-color: #ccc;
                 border-radius: 4px;
             }
-            #l6-nav-panel::-webkit-scrollbar-thumb:hover,
-            #l6-question-panel::-webkit-scrollbar-thumb:hover {
-                background-color: #94a3b8; /* Lebih gelap saat dihover */
-            }
-    
-            /* 8. PERKECIL TAMPILAN ELEMEN LAIN (Zoom Fix) */
-            /* Agar font tidak kegedean di laptop */
+
+            /* 9. ZOOM FIX (TAMPILAN ELEMEN) */
             .intro-card { max-width: 600px; padding: 30px; }
             .l5-header-box h3 { font-size: 1.4rem; }
-            .l5-main-info { font-size: 1rem; }
             .question-title { font-size: 1.2rem; margin-top: 0; }
         }
 
