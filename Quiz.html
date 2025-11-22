@@ -1256,95 +1256,99 @@
         }
 
         /* ======================================================= */
-        /* FASE 10: FIX SCROLL & ANTI-MELAR (VERSI PAKSA) */
+        /* FASE 11: FINAL POLISH (FIX POTONGAN BAWAH) */
         /* ======================================================= */
 
         @media screen and (min-width: 1024px) {
 
             /* 1. MEMAKSA BODY AGAR TIDAK SCROLL GANDA */
             body {
-                overflow: hidden; /* Matikan scroll di browser utama */
+                overflow: hidden;
                 height: 100vh;
             }
 
-            /* 2. KUNCI MATI TINGGI KONTAINER (KOTAK MERAH) */
+            /* 2. KONTAINER UTAMA (KOTAK TRANSPARAN) */
             .container.quiz-mode {
-                /* Gunakan !important agar tidak bisa dilanggar */
-                height: 90vh !important; 
-                max-height: 800px !important;
+                height: 90vh !important; /* Beri tinggi 90% agar lega */
+                max-height: 850px !important;
                 width: 95% !important;
                 max-width: 1100px !important;
         
-                /* Reset total */
                 margin: auto !important;
-                padding: 0 !important;
-                background: transparent;
-                border: none;
-                box-shadow: none;
+                padding: 0 !important; /* Hapus padding agar full */
         
-                /* Flex layout */
+                /* Flex layout untuk memusatkan */
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: center !important;
-                overflow: hidden !important; /* PENTING: Potong yang meluber keluar */
+        
+                /* PENTING: Izinkan overflow sedikit untuk bayangan/text luar */
+                overflow: visible !important; 
+                background: transparent;
+                border: none;
+                box-shadow: none;
             }
 
-            /* 3. STRUKTUR DALAM (WRAPPER PUTIH) */
+            /* 3. WRAPPER PUTIH (KOTAK ISI) */
             .quiz-layout-container {
-                /* Paksa isi penuh container merah */
+                /* Kurangi tinggi sedikit (calc) agar ada ruang untuk bayangan bawah */
                 height: calc(100% - 20px) !important; 
+                width: 100%;
+        
                 display: flex !important;
                 flex-direction: column !important;
         
                 background: #fff;
                 border-radius: 12px;
-                box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-                overflow: hidden !important; /* Kunci radius */
+                box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* Bayangan lebih lembut */
+                overflow: hidden !important; /* Potong sudut radius */
+                box-sizing: border-box;
             }
 
-            /* 4. HEADER & FOOTER (FIXED) */
-            #l6-header, #l6-footer {
-                flex: 0 0 auto; /* Jangan menyusut, jangan membesar */
+            /* 4. HEADER (TETAP) */
+            #l6-header {
+                flex: 0 0 auto;
                 z-index: 20;
                 background: #fff;
-                border-color: #e0e0e0;
+                border-bottom: 1px solid #e0e0e0;
             }
 
-            /* --- TAMBAHKAN KODE INI DI BAWAHNYA --- */
-            /* Kode ini khusus untuk Footer saja, untuk mengangkat tombol */
-            #l6-footer {
-                border-top: 1px solid #e0e0e0; /* Garis batas atas footer */
-    
-                /* INI KUNCINYA: Padding bawah diperbesar (20px) agar tombol naik */
-                padding: 15px 20px 20px 20px !important; 
-            }
-
-            /* 5. AREA TENGAH (MAIN) - KUNCI SCROLL */
+            /* 5. AREA TENGAH (SCROLLABLE) */
             #l6-main {
-                /* Trik CSS agar Flexbox mau memunculkan scroll */
-                flex: 1 1 auto !important; 
-                height: 0 !important; /* PENTING: Ini mematikan auto-expand */
-                min-height: 0 !important; 
+                flex: 1 1 auto !important; /* Ambil sisa ruang */
+                height: 0 !important; /* Trik Flexbox scroll */
+                min-height: 0 !important;
         
-                /* Layout Grid Kiri-Kanan */
                 display: grid !important;
                 grid-template-columns: 240px 1fr !important;
                 overflow: hidden !important;
             }
 
-            /* 6. PANEL KIRI (NOMOR) */
-            #l6-nav-panel {
+            /* 6. PANEL KIRI & KANAN (SCROLLBAR) */
+            #l6-nav-panel, #l6-question-panel {
                 height: 100% !important;
-                overflow-y: auto !important; /* Paksa scroll muncul */
+                overflow-y: auto !important;
+                box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+            }
+    
+            #l6-nav-panel {
                 border-right: 1px solid #eee;
                 padding: 15px;
             }
-
-            /* 7. PANEL KANAN (SOAL) */
+    
             #l6-question-panel {
-                height: 100% !important;
-                overflow-y: auto !important; /* Paksa scroll muncul */
                 padding: 30px 40px;
+            }
+
+            /* 7. FOOTER (FIX TOMBOL TERPOTONG) */
+            #l6-footer {
+                flex: 0 0 auto; /* Jangan menyusut */
+                z-index: 20;
+                background: #fff;
+                border-top: 1px solid #e0e0e0;
+        
+                /* INI FIX-NYA: Tambahkan padding bawah ekstra agar tombol naik */
+                padding: 15px 20px 20px 20px !important; 
             }
 
             /* 8. PERCANTIK SCROLLBAR */
@@ -1362,7 +1366,7 @@
                 border-radius: 4px;
             }
 
-            /* 9. ZOOM FIX (TAMPILAN ELEMEN) */
+            /* 9. ZOOM FIX */
             .intro-card { max-width: 600px; padding: 30px; }
             .l5-header-box h3 { font-size: 1.4rem; }
             .question-title { font-size: 1.2rem; margin-top: 0; }
