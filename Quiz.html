@@ -1256,155 +1256,113 @@
         }
 
         /* ======================================================= */
-        /* FASE 7: PERBAIKAN TAMPILAN DESKTOP (AGAR TIDAK KEBESARAN) */
-        /* ======================================================= */
-
-        /* Media Query khusus Laptop/PC (Layar di atas 1024px) */
-        @media screen and (min-width: 1024px) {
-
-            /* 1. Perkecil Kartu Utama */
-            .intro-card {
-                max-width: 600px; /* Lebar diperkecil dari 720px */
-                padding: 30px 40px; /* Padding dikurangi */
-                margin-top: 2vh; /* Sedikit jarak dari atas */
-            }
-
-            /* 2. Perkecil Box "WELCOME" */
-            .l5-header-box {
-                padding: 10px 15px;
-                margin-bottom: 15px;
-                max-width: 400px;
-            }
-            .l5-header-box h3 {
-                font-size: 1.4rem; /* Dikecilkan dari 1.8rem */
-            }
-            .l5-header-box p {
-                font-size: 0.9rem;
-            }
-
-            /* 3. Perkecil Sapaan & Info Utama */
-            .l5-hello {
-                font-size: 1.2rem; /* Dikecilkan dari 1.5rem */
-                margin: 20px 0 10px 0;
-            }
-            .l5-main-info {
-                font-size: 1rem; /* Dikecilkan dari 1.3rem */
-                line-height: 1.5;
-                margin-bottom: 15px;
-            }
-            .l5-sub-info {
-                font-size: 0.9rem;
-                margin-top: 5px;
-            }
-
-            /* 4. Perkecil Box Peringatan */
-            .warning-box {
-                padding: 10px 15px;
-                margin-top: 15px;
-            }
-            .warning-header {
-                font-size: 0.9rem;
-                margin-bottom: 5px;
-            }
-            #warningText {
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
-            .toggle-warning {
-                margin-top: 5px;
-                font-size: 0.75rem;
-                padding: 3px 8px;
-            }
-
-            /* 5. Tombol & Footer */
-            .start-btn {
-                margin-top: 20px;
-                padding: 10px 30px; /* Tombol lebih ramping */
-                font-size: 0.95rem;
-            }
-    
-            .checker, .intro-card footer {
-                margin-top: 15px;
-                font-size: 11px !important; /* Footer lebih kecil lagi */
-            }
-        }
-
-
-        /* ======================================================= */
-        /* FASE 8 (REVISI FINAL): FIX LAYOUT & SCROLLING DESKTOP */
+        /* FASE 9: ULTIMATE DESKTOP FIX (KOTAK MERAH & SCROLL TERPISAH) */
         /* ======================================================= */
 
         @media screen and (min-width: 1024px) {
 
-            /* 1. KUNCI TINGGI KONTAINER LUAR */
+            /* 1. MEMBUAT "KOTAK MERAH" (CONTAINER FIX) */
             .container.quiz-mode {
-                height: 90vh;            /* Tinggi fix 90% layar */
-                max-height: 800px;       /* Batas maksimal */
-                padding: 0 !important;   /* Hapus padding */
-                margin: auto;            /* Posisi tengah */
-                background: transparent; /* Transparan */
-                box-shadow: none;        /* Hapus bayangan luar */
+                /* Kunci ukuran agar pas di layar (tidak meluber) */
+                width: 95%;
+                max-width: 1100px;
+                height: 85vh;  /* Tinggi Fix 85% dari layar monitor */
+        
+                /* Posisi Rata Tengah Sempurna */
+                margin: auto; 
+                position: relative;
+        
+                /* Reset gaya lama */
+                padding: 0 !important;
                 border: none;
-                display: flex;           /* Pastikan flex agar anak mengisi penuh */
+                background: transparent;
+                box-shadow: none;
+        
+                /* Flexbox untuk mengatur isinya */
+                display: flex;
                 flex-direction: column;
             }
 
-            /* 2. UBAH LAYOUT UTAMA MENJADI FLEXBOX (Header - Main - Footer) */
-            /* Flexbox lebih stabil untuk scrolling area tengah dibanding Grid */
+            /* 2. STRUKTUR DALAM (WRAPPER PUTIH) */
             .quiz-layout-container {
-                height: 100%;           /* Isi penuh container luar */
-                display: flex;          /* Gunakan Flexbox */
-                flex-direction: column; /* Susun ke bawah (Header -> Main -> Footer) */
+                /* Ini agar dia mengisi penuh Kotak Merah */
+                flex: 1; 
+                height: 100%; 
+        
+                /* Susunan Vertikal: Header - Main - Footer */
+                display: flex;
+                flex-direction: column;
+        
                 background: #fff;
                 border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-                overflow: hidden;       /* Masking radius */
+                box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+                overflow: hidden; /* Agar radius tidak bocor */
             }
 
-            /* 3. KUNCI HEADER & FOOTER */
+            /* 3. HEADER & FOOTER (KOTAK HIJAU) - JANGAN MENYUSUT */
             #l6-header, #l6-footer {
-                flex-shrink: 0; /* Jangan biarkan menyusut/gepeng */
-                z-index: 10;
-                background: #fff; /* Pastikan background tidak transparan */
+                flex-shrink: 0; /* Tinggi tetap, tidak boleh gepeng */
+                z-index: 20;
+                background: #fff;
                 border-color: #e0e0e0;
             }
 
-            /* 4. AREA TENGAH (MAIN) - INI PERBAIKAN UTAMANYA */
+            /* 4. AREA TENGAH (MAIN) - RUANG SISA */
             #l6-main {
-                flex: 1;                /* Ambil SEMUA sisa ruang kosong vertical */
-                height: 0;              /* Trik CSS Flexbox agar scroll berfungsi */
-                min-height: 0;          /* Trik tambahan */
-                overflow: hidden;       /* Kunci konten agar tidak meluber keluar */
+                /* AJAIBNYA DISINI: Ambil semua sisa ruang vertikal */
+                flex: 1; 
+                height: 0; /* Trik CSS agar scroll berfungsi di dalam flex */
+                min-height: 0;
         
-                /* Kembalikan Grid untuk pembagian Kiri-Kanan (Nav-Soal) */
+                /* Susunan Grid Kiri-Kanan */
                 display: grid;
-                grid-template-columns: 220px 1fr; 
+                grid-template-columns: 240px 1fr; /* Kiri 240px, Kanan sisanya */
+                overflow: hidden; /* Cegah scroll ganda */
             }
 
-            /* 5. AKTIFKAN SCROLL PADA MASING-MASING PANEL */
-            #l6-nav-panel, #l6-question-panel {
-                height: 100%;           /* Isi penuh tinggi #l6-main */
-                overflow-y: auto;       /* Scrollbar muncul DI SINI */
-                scrollbar-width: thin;  /* Scrollbar tipis (Firefox) */
+            /* 5. PANEL KIRI (NOMOR) - SCROLL TERPISAH */
+            #l6-nav-panel {
+                height: 100%;
+                overflow-y: auto; /* Scrollbar muncul otomatis jika panjang */
+                border-right: 1px solid #eee;
+                padding: 15px;
+                box-sizing: border-box;
             }
-    
-            /* Style Scrollbar Webkit (Chrome/Edge) */
+
+            /* 6. PANEL KANAN (SOAL) - SCROLL TERPISAH */
+            #l6-question-panel {
+                height: 100%;
+                overflow-y: auto; /* Scrollbar muncul otomatis jika panjang */
+                padding: 30px 40px; /* Padding yang lega */
+                box-sizing: border-box;
+            }
+
+            /* 7. MEMPERCANTIK SCROLLBAR (Agar tidak terlihat jadul) */
             #l6-nav-panel::-webkit-scrollbar,
             #l6-question-panel::-webkit-scrollbar {
                 width: 8px;
             }
             #l6-nav-panel::-webkit-scrollbar-track,
             #l6-question-panel::-webkit-scrollbar-track {
-                background: #f5f5f5;
+                background: #f9f9f9;
             }
             #l6-nav-panel::-webkit-scrollbar-thumb,
             #l6-question-panel::-webkit-scrollbar-thumb {
-                background-color: #ccc;
+                background-color: #cbd5e1; /* Abu-abu soft */
                 border-radius: 4px;
             }
+            #l6-nav-panel::-webkit-scrollbar-thumb:hover,
+            #l6-question-panel::-webkit-scrollbar-thumb:hover {
+                background-color: #94a3b8; /* Lebih gelap saat dihover */
+            }
+    
+            /* 8. PERKECIL TAMPILAN ELEMEN LAIN (Zoom Fix) */
+            /* Agar font tidak kegedean di laptop */
+            .intro-card { max-width: 600px; padding: 30px; }
+            .l5-header-box h3 { font-size: 1.4rem; }
+            .l5-main-info { font-size: 1rem; }
+            .question-title { font-size: 1.2rem; margin-top: 0; }
         }
-
-
 
     </style>
     </head>
