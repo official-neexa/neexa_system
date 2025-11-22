@@ -1329,76 +1329,73 @@
             }
         }
 
+
         /* ======================================================= */
-        /* FASE 8: FIX LAYOUT DESKTOP (FIX HEIGHT & SCROLL) */
+        /* FASE 8 (REVISI FINAL): FIX LAYOUT & SCROLLING DESKTOP */
         /* ======================================================= */
 
-        /* Hanya berlaku untuk Desktop/Laptop (Layar lebar) */
         @media screen and (min-width: 1024px) {
 
-            /* 1. MENGATASI MASALAH TERPOTONG DI ATAS */
-            /* Kita paksa tinggi Container Kuis agar pas di layar (90% tinggi layar) */
+            /* 1. KUNCI TINGGI KONTAINER LUAR */
             .container.quiz-mode {
-                height: 90vh;           /* Tinggi fix 90% dari viewport */
-                max-height: 800px;      /* Jangan lebih tinggi dari 800px */
-                display: flex;          /* Gunakan Flexbox */
-                flex-direction: column; /* Susunan vertikal */
-                justify-content: center; 
-                overflow: hidden;       /* Sembunyikan scroll di container luar */
-                margin-top: auto;       /* Reset margin */
-                margin-bottom: auto;
-                padding: 0 !important;  /* Hapus padding agar full */
-                border: none;           /* Hapus border luar agar bersih */
-                background: transparent;/* Transparan agar menyatu */
-                box-shadow: none;       /* Hapus bayangan luar */
+                height: 90vh;            /* Tinggi fix 90% layar */
+                max-height: 800px;       /* Batas maksimal */
+                padding: 0 !important;   /* Hapus padding */
+                margin: auto;            /* Posisi tengah */
+                background: transparent; /* Transparan */
+                box-shadow: none;        /* Hapus bayangan luar */
+                border: none;
+                display: flex;           /* Pastikan flex agar anak mengisi penuh */
+                flex-direction: column;
             }
 
-            /* 2. MEMASTIKAN LAYOUT DALAM MENGISI PENUH KONTAINER */
+            /* 2. UBAH LAYOUT UTAMA MENJADI FLEXBOX (Header - Main - Footer) */
+            /* Flexbox lebih stabil untuk scrolling area tengah dibanding Grid */
             .quiz-layout-container {
-                height: 100%;          /* Isi penuh container .container.quiz-mode */
-                border-radius: 12px;   /* Pindah radius ke sini */
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Pindah shadow ke sini */
-                background: #fff;      /* Pindah background putih ke sini */
-                /* Grid layout sudah didefinisikan di Fase sebelumnya: auto 1fr auto */
+                height: 100%;           /* Isi penuh container luar */
+                display: flex;          /* Gunakan Flexbox */
+                flex-direction: column; /* Susun ke bawah (Header -> Main -> Footer) */
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                overflow: hidden;       /* Masking radius */
             }
 
-            /* 3. MEMBATASI AREA TENGAH (MAIN) AGAR TIDAK MELUBER */
+            /* 3. KUNCI HEADER & FOOTER */
+            #l6-header, #l6-footer {
+                flex-shrink: 0; /* Jangan biarkan menyusut/gepeng */
+                z-index: 10;
+                background: #fff; /* Pastikan background tidak transparan */
+                border-color: #e0e0e0;
+            }
+
+            /* 4. AREA TENGAH (MAIN) - INI PERBAIKAN UTAMANYA */
             #l6-main {
-                height: 100%;          /* Pastikan tinggi penuh */
-                overflow: hidden;      /* PENTING: Mencegah layout pecah */
-                /* Grid kolom sudah didefinisikan sebelumnya: 150px 1fr */
+                flex: 1;                /* Ambil SEMUA sisa ruang kosong vertical */
+                height: 0;              /* Trik CSS Flexbox agar scroll berfungsi */
+                min-height: 0;          /* Trik tambahan */
+                overflow: hidden;       /* Kunci konten agar tidak meluber keluar */
+        
+                /* Kembalikan Grid untuk pembagian Kiri-Kanan (Nav-Soal) */
+                display: grid;
+                grid-template-columns: 220px 1fr; 
             }
 
-            /* 4. SCROLLBAR KHUSUS UNTUK NAVIGASI NOMOR (KIRI) */
-            #l6-nav-panel {
-                height: 100%;          /* Tinggi mengikuti area main */
-                overflow-y: auto;      /* AKTIFKAN SCROLL VERTIKAL */
-                border-right: 1px solid #e0e0e0;
-        
-                /* Mempercantik Scrollbar (Chrome/Safari/Edge) */
-                scrollbar-width: thin; 
-                scrollbar-color: #ccc #f0f0f0;
+            /* 5. AKTIFKAN SCROLL PADA MASING-MASING PANEL */
+            #l6-nav-panel, #l6-question-panel {
+                height: 100%;           /* Isi penuh tinggi #l6-main */
+                overflow-y: auto;       /* Scrollbar muncul DI SINI */
+                scrollbar-width: thin;  /* Scrollbar tipis (Firefox) */
             }
     
-            /* 5. SCROLLBAR KHUSUS UNTUK SOAL (KANAN) */
-            /* Agar jika soalnya panjang, hanya area kanan yang di-scroll */
-            #l6-question-panel {
-                height: 100%;          /* Tinggi mengikuti area main */
-                overflow-y: auto;      /* AKTIFKAN SCROLL VERTIKAL */
-        
-                /* Mempercantik Scrollbar */
-                scrollbar-width: thin;
-                scrollbar-color: #ccc #f0f0f0;
-            }
-
-            /* Styling Tambahan untuk Scrollbar Webkit (Chrome) */
+            /* Style Scrollbar Webkit (Chrome/Edge) */
             #l6-nav-panel::-webkit-scrollbar,
             #l6-question-panel::-webkit-scrollbar {
                 width: 8px;
             }
             #l6-nav-panel::-webkit-scrollbar-track,
             #l6-question-panel::-webkit-scrollbar-track {
-                background: #f0f0f0;
+                background: #f5f5f5;
             }
             #l6-nav-panel::-webkit-scrollbar-thumb,
             #l6-question-panel::-webkit-scrollbar-thumb {
@@ -1406,6 +1403,7 @@
                 border-radius: 4px;
             }
         }
+
 
 
     </style>
