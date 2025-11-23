@@ -1446,6 +1446,36 @@
             border-radius: 4px;
         }
 
+        /* ======================================================= */
+        /* FASE 13: FIX HALAMAN REVIEW TERPOTONG DI HP (MOBILE) */
+        /* ======================================================= */
+
+        @media only screen and (max-width: 800px) {
+
+            /* 1. Pastikan Halaman Review tidak terkunci tingginya */
+            #layer-review-page {
+                height: auto !important;      /* Biarkan memanjang ke bawah */
+                min-height: 100vh;            /* Minimal setinggi layar */
+                overflow-y: visible !important; /* Matikan scroll internal, pakai scroll browser */
+                padding-bottom: 80px !important; /* Beri jarak kosong di paling bawah */
+            }
+
+            /* 2. Pastikan Kontainer Utama di HP juga tidak memotong */
+            .container, .container.quiz-mode {
+                height: auto !important;
+                overflow: visible !important;
+                display: block !important;    /* Matikan flexbox center di HP */
+            }
+
+            /* 3. Perbaikan Kartu Putih di HP */
+            #l6-final-score-page {
+                margin-top: 0;
+                border-radius: 0;       /* Hilangkan radius agar full screen */
+                box-shadow: none;       /* Hilangkan bayangan agar ringan */
+                border-bottom: 1px solid #eee;
+            }
+        }
+
     </style>
     </head>
 
