@@ -1447,32 +1447,55 @@
         }
 
         /* ======================================================= */
-        /* FASE 13: FIX HALAMAN REVIEW TERPOTONG DI HP (MOBILE) */
+        /* FASE 14: PERBAIKAN TOTAL MOBILE (FIX POTONGAN ATAS) */
         /* ======================================================= */
 
         @media only screen and (max-width: 800px) {
 
-            /* 1. Pastikan Halaman Review tidak terkunci tingginya */
-            #layer-review-page {
-                height: auto !important;      /* Biarkan memanjang ke bawah */
-                min-height: 100vh;            /* Minimal setinggi layar */
-                overflow-y: visible !important; /* Matikan scroll internal, pakai scroll browser */
-                padding-bottom: 80px !important; /* Beri jarak kosong di paling bawah */
-            }
-
-            /* 2. Pastikan Kontainer Utama di HP juga tidak memotong */
-            .container, .container.quiz-mode {
+            /* 1. RESET BODY (Matikan Rata Tengah) */
+            /* Ini kunci agar bagian atas tidak hilang */
+            body {
+                display: block !important; /* Jangan Flexbox */
                 height: auto !important;
-                overflow: visible !important;
-                display: block !important;    /* Matikan flexbox center di HP */
+                min-height: 100vh;
+                overflow-y: auto !important; /* Aktifkan scroll browser */
+                padding: 0 !important;
             }
 
-            /* 3. Perbaikan Kartu Putih di HP */
+            /* 2. RESET CONTAINER (Biarkan Memanjang) */
+            .container, .container.quiz-mode {
+                width: 100% !important;
+                height: auto !important; /* Jangan dikunci tingginya */
+                min-height: 100vh;       /* Minimal setinggi layar */
+        
+                display: block !important; /* Susun ke bawah normal */
+                margin: 0 !important;      /* Hapus margin auto */
+                padding: 15px !important;  /* Beri jarak aman dari tepi HP */
+        
+                box-sizing: border-box;
+                overflow: visible !important;
+            }
+
+            /* 3. FIX HALAMAN HASIL & REVIEW (Agar Turun ke Bawah) */
+            #layer-review-page {
+                height: auto !important;
+                display: block !important;
+                padding-top: 20px !important; /* Jarak aman dari atas layar */
+                padding-bottom: 80px !important; /* Jarak aman bawah */
+            }
+
+            /* 4. KARTU PUTIH SKOR */
             #l6-final-score-page {
-                margin-top: 0;
-                border-radius: 0;       /* Hilangkan radius agar full screen */
-                box-shadow: none;       /* Hilangkan bayangan agar ringan */
-                border-bottom: 1px solid #eee;
+                margin-top: 30px !important; /* Dorong ke bawah agar tidak mepet atas */
+                margin-bottom: 30px !important;
+                width: 100% !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+            }
+    
+            /* 5. FIX FORMAT GAMBAR DI HP */
+            .review-question-container img {
+                max-width: 100% !important;
+                height: auto !important;
             }
         }
 
