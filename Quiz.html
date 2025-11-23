@@ -1499,6 +1499,51 @@
             }
         }
 
+        /* ======================================================= */
+        /* FASE 15: FIX TIPOGRAFI JEPANG (FURIGANA RAPI) */
+        /* ======================================================= */
+
+        /* 1. Container Teks Soal */
+        /* Pastikan baris tidak terlalu rapat agar Furigana tidak menabrak baris atasnya */
+        .question-text-wrapper, 
+        .option-label span {
+            line-height: 2.2 !important; /* Beri jarak napas vertikal */
+        }
+
+        /* 2. Reset Element RUBY (Wadah Kanji + Furigana) */
+        ruby {
+            display: inline-flex !important;
+            flex-direction: column-reverse !important; /* Trik agar browser merender tumpukan dengan benar */
+            vertical-align: bottom !important;
+            align-items: center !important;
+            margin: 0 2px !important; /* Sedikit jarak antar kata */
+    
+            /* Properti Standar Ruby */
+            ruby-position: over;
+            ruby-align: center;
+        }
+
+        /* 3. Reset Element RT (Teks Furigana Kecil) */
+        rt {
+            display: block !important;
+            font-size: 0.55em !important; /* Ukuran pas (sekitar setengah kanji) */
+            line-height: 1 !important;    /* Rapatkan vertikal */
+            text-align: center !important;
+            margin-bottom: -2px !important; /* Dekatkan ke Kanji di bawahnya */
+            color: #555; /* Warna sedikit lebih abu agar tidak mendominasi */
+            user-select: none; /* Agar tidak ikut ter-copy block */
+        }
+
+        /* 4. Khusus Tampilan Mobile (Agar tidak kekecilan) */
+        @media only screen and (max-width: 600px) {
+            rt {
+                font-size: 0.6em !important; /* Sedikit perbesar di HP agar terbaca */
+            }
+            .question-text-wrapper {
+                line-height: 2.5 !important; /* Jarak baris lebih lebar di HP */
+            }
+        }
+
     </style>
     </head>
 
