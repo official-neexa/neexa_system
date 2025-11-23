@@ -1543,6 +1543,20 @@
                 line-height: 2.5 !important; /* Jarak baris lebih lebar di HP */
             }
         }
+        /* ======================================================= */
+        /* FASE 16: REVISI JARAK FURIGANA (TURUN SEDIKIT) */
+        /* ======================================================= */
+
+        rt {
+            /* 1. Tarik margin bawah lebih kuat (sebelumnya -2px) */
+            margin-bottom: -8px !important; 
+    
+            /* 2. Dorong posisi teks turun 4 pixel */
+            transform: translateY(4px) !important;
+    
+            /* 3. Pastikan tidak ada padding yang mengganggu */
+            padding-bottom: 0 !important;
+        }
 
     </style>
     </head>
