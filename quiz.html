@@ -1261,6 +1261,15 @@
 
         @media screen and (min-width: 1024px) {
 
+            /* === TAMBAHAN PENTING: JEMBATAN TINGGI === */
+            /* Agar kotak soal tidak gepeng */
+            #accessContent {
+                height: 100% !important;
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            
             /* 1. MEMAKSA BODY AGAR TIDAK SCROLL GANDA */
             body {
                 overflow: hidden;
