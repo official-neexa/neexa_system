@@ -1261,15 +1261,6 @@
 
         @media screen and (min-width: 1024px) {
 
-            /* === TAMBAHAN PENTING: JEMBATAN TINGGI === */
-            /* Agar kotak soal tidak gepeng */
-            #accessContent {
-                height: 100% !important;
-                width: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-            }
-            
             /* 1. MEMAKSA BODY AGAR TIDAK SCROLL GANDA */
             body {
                 overflow: hidden;
@@ -1616,7 +1607,7 @@
             </p>
 
             <div class="warning-box">
-                <div class="warning-header"⚠️ PERINGATAN ⚠️</div>
+                <div class="warning-header">⚠️ PERINGATAN ⚠️</div>
                 <p id="warningText">Harap dikerjakan sendiri tanpa bantuan apa pun untuk menguji kemampuanmu yang sebenarnya.</p>
                 <button id="btnToggleWarning" class="toggle-warning">Sembunyikan</button>
             </div>
@@ -1853,28 +1844,13 @@
         
         if(!currentProduct) currentProduct = USER_DATA.product;
         
-        // 1. Tampilkan Data Dasar
         document.getElementById('welcomeUserName').textContent = USER_DATA.nama || 'Peserta';
         document.getElementById('testInfoTitle').textContent = currentProduct || '[Nama Soal]';
         
-        // 2. TAMPILKAN DATA DINAMIS DARI DATABASE (MISI 1 & 2)
-        if (USER_DATA.stats) {
-            // Misi 1: Angka Soal & Kategori
-            document.getElementById('testInfoCategoryCount').textContent = USER_DATA.stats.cCount || '0';
-            document.getElementById('testInfoQuestionCount').textContent = USER_DATA.stats.qCount || '0';
-            
-            // Misi 2: Nama Pemeriksa
-            document.getElementById('testInfoChecker').textContent = USER_DATA.stats.pemeriksa || 'Team';
-            
-            // Misi 2: Nama Pembuat (Footer)
-            // Kita cari elemen footer di dalam intro-card
-            const footerEl = document.querySelector('.intro-card footer');
-            if (footerEl) {
-                const makerName = USER_DATA.stats.pembuat || 'NEEXA System';
-                const year = new Date().getFullYear();
-                footerEl.innerHTML = `© ${year} NEEXA System | Exam Created by ${makerName}`;
-            }
-        }
+        // Data dummy (bisa disesuaikan)
+        document.getElementById('testInfoCategoryCount').textContent = '3';
+        document.getElementById('testInfoQuestionCount').textContent = '50';
+        document.getElementById('testInfoChecker').textContent = 'Team';
         
         // Sembunyikan Layer 4
         UI.tokenInputArea.classList.add('hidden'); 
