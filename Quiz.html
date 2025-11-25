@@ -1882,6 +1882,15 @@
         UI.layer5.classList.remove('hidden');
     }
 
+    // Listener Tombol Sembunyikan
+    const btnToggle = document.getElementById('btnToggleWarning');
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            const box = document.getElementById('warningContainer');
+            if (box) box.style.display = 'none';
+        });
+    }
+
     // FUNGSI TIMER
     let currentTimerInterval = null; 
 
@@ -2579,15 +2588,6 @@
             setMessage(UI.msg4, '', false); 
         }
     });
-
-    // Listener Tombol Sembunyikan
-    const btnToggle = document.getElementById('btnToggleWarning');
-    if (btnToggle) {
-        btnToggle.addEventListener('click', () => {
-            const box = document.getElementById('warningContainer');
-            if (box) box.style.display = 'none';
-        });
-    }
 </script>
 </body>
 </html>
