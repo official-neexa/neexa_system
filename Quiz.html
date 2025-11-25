@@ -1256,42 +1256,50 @@
         }
 
         /* ======================================================= */
-        /* FASE 11: FINAL POLISH (FIX POTONGAN BAWAH) */
+        /* FASE FINAL: DESKTOP LAYOUT FIX (ANTI-GEPENG) */
         /* ======================================================= */
 
         @media screen and (min-width: 1024px) {
 
-            /* 1. MEMAKSA BODY AGAR TIDAK SCROLL GANDA */
+            /* 1. BODY & SCROLL */
             body {
-                overflow: hidden;
+                overflow: hidden; /* Matikan scroll browser utama */
                 height: 100vh;
             }
 
-            /* 2. KONTAINER UTAMA (KOTAK TRANSPARAN) */
+            /* 2. KONTAINER UTAMA (KOTAK MERAH/LUAR) */
             .container.quiz-mode {
-                height: 90vh !important; /* Beri tinggi 90% agar lega */
+                height: 90vh !important;      /* Tinggi Fix */
                 max-height: 850px !important;
                 width: 95% !important;
                 max-width: 1100px !important;
         
                 margin: auto !important;
-                padding: 0 !important; /* Hapus padding agar full */
+                padding: 0 !important;
         
-                /* Flex layout untuk memusatkan */
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: center !important;
         
-                /* PENTING: Izinkan overflow sedikit untuk bayangan/text luar */
-                overflow: visible !important; 
                 background: transparent;
                 border: none;
                 box-shadow: none;
+                overflow: visible !important;
             }
 
-            /* 3. WRAPPER PUTIH (KOTAK ISI) */
+            /* 3. JEMBATAN PENGHUBUNG (INI YANG KEMARIN HILANG/SALAH) */
+            /* Tanpa ini, kotak soal akan gepeng! */
+            #accessContent {
+                width: 100% !important;
+                height: 100% !important; /* Paksa ambil tinggi penuh */
+                display: flex !important;
+                flex-direction: column !important;
+                flex: 1 !important;
+            }
+
+            /* 4. WRAPPER PUTIH (KOTAK ISI) */
             .quiz-layout-container {
-                /* Kurangi tinggi sedikit (calc) agar ada ruang untuk bayangan bawah */
+                /* Kurangi sedikit untuk ruang bayangan */
                 height: calc(100% - 20px) !important; 
                 width: 100%;
         
@@ -1300,12 +1308,12 @@
         
                 background: #fff;
                 border-radius: 12px;
-                box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* Bayangan lebih lembut */
-                overflow: hidden !important; /* Potong sudut radius */
+                box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+                overflow: hidden !important;
                 box-sizing: border-box;
             }
 
-            /* 4. HEADER (TETAP) */
+            /* 5. HEADER (FIXED) */
             #l6-header {
                 flex: 0 0 auto;
                 z-index: 20;
@@ -1313,22 +1321,22 @@
                 border-bottom: 1px solid #e0e0e0;
             }
 
-            /* 5. AREA TENGAH (SCROLLABLE) */
+            /* 6. AREA TENGAH (MAIN - SCROLLABLE) */
             #l6-main {
                 flex: 1 1 auto !important; /* Ambil sisa ruang */
-                height: 0 !important; /* Trik Flexbox scroll */
+                height: 0 !important;      /* Trik CSS Flexbox Scroll */
                 min-height: 0 !important;
         
                 display: grid !important;
-                grid-template-columns: 240px 1fr; /* Hapus !important di sini saja */
+                grid-template-columns: 240px 1fr; /* Kiri 240px, Kanan Sisa */
                 overflow: hidden !important;
             }
 
-            /* 6. PANEL KIRI & KANAN (SCROLLBAR) */
+            /* 7. PANEL KIRI & KANAN */
             #l6-nav-panel, #l6-question-panel {
                 height: 100% !important;
-                overflow-y: auto !important;
-                box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+                overflow-y: auto !important; /* Scrollbar Muncul Di Sini */
+                box-sizing: border-box;
             }
     
             #l6-nav-panel {
@@ -1340,18 +1348,16 @@
                 padding: 30px 40px;
             }
 
-            /* 7. FOOTER (FIX TOMBOL TERPOTONG) */
+            /* 8. FOOTER (FIXED) */
             #l6-footer {
-                flex: 0 0 auto; /* Jangan menyusut */
+                flex: 0 0 auto;
                 z-index: 20;
                 background: #fff;
                 border-top: 1px solid #e0e0e0;
-        
-                /* INI FIX-NYA: Tambahkan padding bawah ekstra agar tombol naik */
-                padding: 15px 20px 20px 20px !important; 
+                padding: 15px 20px 20px 20px !important; /* Bantalan Bawah */
             }
 
-            /* 8. PERCANTIK SCROLLBAR */
+            /* 9. PERCANTIK SCROLLBAR */
             #l6-nav-panel::-webkit-scrollbar,
             #l6-question-panel::-webkit-scrollbar {
                 width: 8px;
@@ -1366,7 +1372,7 @@
                 border-radius: 4px;
             }
 
-            /* 9. ZOOM FIX */
+            /* 10. ZOOM FIX ELEMENT */
             .intro-card { max-width: 600px; padding: 30px; }
             .l5-header-box h3 { font-size: 1.4rem; }
             .question-title { font-size: 1.2rem; margin-top: 0; }
@@ -1607,7 +1613,7 @@
             </p>
 
             <div class="warning-box">
-                <div class="warning-header">⚠️ PERINGATAN ⚠️</div>
+                <div class="warning-header"⚠️ PERINGATAN ⚠️</div>
                 <p id="warningText">Harap dikerjakan sendiri tanpa bantuan apa pun untuk menguji kemampuanmu yang sebenarnya.</p>
                 <button id="btnToggleWarning" class="toggle-warning">Sembunyikan</button>
             </div>
@@ -1844,13 +1850,28 @@
         
         if(!currentProduct) currentProduct = USER_DATA.product;
         
+        // 1. Tampilkan Data Dasar
         document.getElementById('welcomeUserName').textContent = USER_DATA.nama || 'Peserta';
         document.getElementById('testInfoTitle').textContent = currentProduct || '[Nama Soal]';
         
-        // Data dummy (bisa disesuaikan)
-        document.getElementById('testInfoCategoryCount').textContent = '3';
-        document.getElementById('testInfoQuestionCount').textContent = '50';
-        document.getElementById('testInfoChecker').textContent = 'Team';
+        // 2. TAMPILKAN DATA DINAMIS DARI DATABASE (MISI 1 & 2)
+        if (USER_DATA.stats) {
+            // Misi 1: Angka Soal & Kategori
+            document.getElementById('testInfoCategoryCount').textContent = USER_DATA.stats.cCount || '0';
+            document.getElementById('testInfoQuestionCount').textContent = USER_DATA.stats.qCount || '0';
+            
+            // Misi 2: Nama Pemeriksa
+            document.getElementById('testInfoChecker').textContent = USER_DATA.stats.pemeriksa || 'Team';
+            
+            // Misi 2: Nama Pembuat (Footer)
+            // Kita cari elemen footer di dalam intro-card
+            const footerEl = document.querySelector('.intro-card footer');
+            if (footerEl) {
+                const makerName = USER_DATA.stats.pembuat || 'NEEXA System';
+                const year = new Date().getFullYear();
+                footerEl.innerHTML = `© ${year} NEEXA System | Exam Created by ${makerName}`;
+            }
+        }
         
         // Sembunyikan Layer 4
         UI.tokenInputArea.classList.add('hidden'); 
