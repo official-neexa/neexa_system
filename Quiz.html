@@ -1606,18 +1606,18 @@
                 <span class="l5-sub-info">Apakah kamu sudah siap menaklukannya?</span>
             </p>
 
-            <div class="warning-box">
+            <div id="warningContainer" class="warning-box">
                 <div class="warning-header"⚠️ PERINGATAN ⚠️</div>
+                
                 <p id="warningText">Harap dikerjakan sendiri tanpa bantuan apa pun untuk menguji kemampuanmu yang sebenarnya.</p>
                 <button id="btnToggleWarning" class="toggle-warning">Sembunyikan</button>
             </div>
-
             <button id="btnStartChallenge" class="start-btn">Mulai Tantangan</button>
 
             <p class="checker">soal diperiksa oleh: <span id="testInfoChecker">[Nama Pengecek]</span></p>
             <footer>© 2025 [BRAND NAME] System | Powered by Google Apps Script</footer>
           </div>
-        </div> 
+        </div>
 
         <p id="message4" class="error" style="text-align: center; margin-top: 15px;"></p>
 
@@ -2579,6 +2579,15 @@
             setMessage(UI.msg4, '', false); 
         }
     });
+
+    // Listener Tombol Sembunyikan
+    const btnToggle = document.getElementById('btnToggleWarning');
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            const box = document.getElementById('warningContainer');
+            if (box) box.style.display = 'none';
+        });
+    }
 </script>
 </body>
 </html>
